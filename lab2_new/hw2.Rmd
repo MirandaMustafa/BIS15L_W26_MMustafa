@@ -1,11 +1,10 @@
 ---
 title: "Homework 2"
-author: "Your Name Here"
-date: "`r Sys.Date()`"
+author: "Miranda Mustafa
+date: "'1/9/2026)`"
 output:
   html_document: 
     theme: spacelab
----
 
 ## Instructions
 Answer the following questions and/or complete the exercises in RMarkdown. Please embed all of your code and push the final work to your repository. Your report should be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run.
@@ -18,18 +17,14 @@ getwd()
 
 **2. Make a new folder in your lab 2 folder called `homework`. Now, change your current working directory to the `homework` folder using the setwd() function.**
 ```{r}
-dir.create("homework")
+dir.create("homework", showWarnings = FALSE)
 
-```
-
-```{r}
 
 setwd("homework")
-```
-
-```{r}
-
 getwd()
+
+
+
 ```
 
 
@@ -62,6 +57,11 @@ x<- (c(2, 8, 4, 6, NA, 4, 9, 9, 10, NA))
 
 ```{r}
 mean(x)
+```
+
+```{r}
+mean(x, na.rm = TRUE)
+
 ```
 
 ## Knit and Upload
