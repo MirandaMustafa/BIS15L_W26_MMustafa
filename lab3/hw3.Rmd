@@ -51,7 +51,7 @@ mountains<- tibble ("names, height_ft, height_meters, summits")
 
 **6. Which mountain has the highest number of fatalities? Make a new vector `fatalities` and add it to the `mountains` data frame.**
 ```{r}
-fatalities<- c()
+fatalities<- c
 ```
 
 **7. What is the fatality rate (i.e., fatalities divided by summits) for each mountain? Create a new vector `fatality_rate` and add it to the `mountains` data frame.**
