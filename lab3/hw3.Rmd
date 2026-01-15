@@ -45,28 +45,31 @@ mountains<- tibble ("names, height_ft, height_meters, first_climbed")
 
 **5. How many times have each of these mountains been climbed? Make a new vector `summits` and add it to the `mountains` data frame.**
 ```{r}
-summits<- c(12800, 964,933, 450, 530)
+summits<- c(12800, 964, 933, 450, 530)
 mountains<- tibble ("names, height_ft, height_meters, summits")
 ```
 
 **6. Which mountain has the highest number of fatalities? Make a new vector `fatalities` and add it to the `mountains` data frame.**
 ```{r}
-fatalities<- c
+fatalities<- c("Everest" = 280,"K2" = 91, "Annapurna I" = 73,"Nanga Parbat" = 68, "Mont Blanc" = 6000)
 ```
 
 **7. What is the fatality rate (i.e., fatalities divided by summits) for each mountain? Create a new vector `fatality_rate` and add it to the `mountains` data frame.**
 ```{r}
 
+"mountains$fatality_rate <- mountains$Fatalities / mountains$Summits"
+
 ```
 
 **8. Write your data frame to a .csv file called `mountains_data`.**
 ```{r}
+write.csv("mountains", "mountains_data.csv")
 
 ```
 
 **9. Clear your environment panel by clicking on the broom icon. Then read in your `mountains_data.csv` file to a new object called `mountains`.**
 ```{r}
-
+"mountains" <- read.csv("mountains_data.csv")
 ```
 
 ```{r}
@@ -75,7 +78,7 @@ fatalities<- c
 
 **10. Use a summary function of your choice to show the structure of your `mountains` data frame.**
 ```{r}
-
+str(mountains)
 ```
 
 ## Knit and Upload
