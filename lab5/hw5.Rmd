@@ -23,12 +23,12 @@ Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 
 **1. Load the data into a new object called `homerange`.**
 ```{r}
-
+homerange<-read_csv("Tamburelloetal_HomeRangeDatabase.csv")
 ```
 
 **2. What is the structure of the `homerange` data? Does it have any NA's? Do a quick exploratory analysis of your choice below.**
 ```{r}
-
+setwd(homerange)
 ```
 
 ```{r}
