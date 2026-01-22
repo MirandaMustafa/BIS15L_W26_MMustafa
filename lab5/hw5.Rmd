@@ -28,54 +28,107 @@ homerange<-read_csv("Tamburelloetal_HomeRangeDatabase.csv")
 
 **2. What is the structure of the `homerange` data? Does it have any NA's? Do a quick exploratory analysis of your choice below.**
 ```{r}
-setwd(homerange)
+summary(homerange)
 ```
 
 ```{r}
-
+glimpse(homerange)
 ```
 
 **3. Which animal groups are represented in the data? Make a plot that shows the number in each class.**
 ```{r}
+names(homerange)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+
+homerange %>%
+  count(class) %>%
+  ggplot(aes(x = class, y = n, fill=class)) +
+  geom_col() +
+  labs(title = "Number of Animals in Each Class", x = "Class", y = "Count") 
 
 ```
 
 **4. Are there more carnivores or herbivores represented in the data? Make a plot that shows the number in each trophic guild.**
 ```{r}
+homerange %>%
+  count(trophic.guild) %>%
+  ggplot(aes(x = trophic.guild, y = n, fill = trophic.guild)) +
+  geom_col() +
+  labs(title = "Number of Species in Each Trophic Guild", x = "Trophic Guild", y = "Count") +
+  theme_minimal()
 
 ```
 
 **5. Which herbivorous mammals have homeranges greater than 1,000,000 m²? Show only the common name, order, mean homerange size, and mean body mass. Arrange the data in descending order by homerange size and show only the top 10 species.**
 ```{r}
+homerange %>% count(trophic.guild)
 
 ```
 
 **6. Which two species have the largest and smallest homerange sizes?**
 ```{r}
 
+homerange %>% arrange(desc(mean.hra.m2)) %>% select(common.name, mean.hra.m2) %>% head()
+
 ```
 
 ```{r}
-
+homerange %>% arrange(mean.hra.m2) %>% select(common.name, mean.hra.m2) %>% head
 ```
 
 **7. Which carnivorous mammals have the largest homeranges?**
 ```{r}
+names(homerange)
+```
+
+```{r}
+homerange %>%
+  filter(class == "Mammalia", trophic.guild == "carnivore") %>%
+    arrange(desc(mean.hra.m2)) %>%
+  select(common.name, order, mean.hra.m2, mean.mass.g)
+
 
 ```
 
 **8. Is there a relationship between body mass and homerange size? Make a scatterplot to show this relationship. Be sure to include appropriate labels and a title.**
 ```{r}
+ggplot(homerange, aes(x = mean.mass.g, y = mean.hra.m2)) +
+  geom_point(aes(color = class)) +
+  scale_x_log10() +  
+  labs(title = "Relationship Between Body Mass and Homerange Size",
+     x = "Mean Body Mass (kg, log scale)",
+       y = "Mean Homerange Size (m², log scale)") 
 
 ```
 
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
 ```{r}
-
+homerange %>%
+   filter(class%in% c("Mammalia", "Aves")) %>% 
+  ggplot(aes(x = class, y = mean.hra.m2, color=class)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  labs(title = "Homerange Sizes of Birds vs Mammals",
+       x = "Class",
+       y = "Mean Homerange Size") 
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
 ```{r}
+homerange %>% 
+  filter(class == "Mammalia") %>% 
+  select(common.name, trophic.guild, mean.mass.g, mean.hra.m2) %>% 
+  arrange(desc(mean.mass.g)) %>% 
+  ggplot(aes(x = trophic.guild, y = mean.hra.m2, fill = trophic.guild)) +
+  geom_boxplot() +
+  scale_y_log10() + 
+  labs(title = "Body Mass of Herbivorous vs Carnivorous Mammals", x = "Trophic Guild", y = "Mean Body Mass (kg)")
+
 
 ```
 
