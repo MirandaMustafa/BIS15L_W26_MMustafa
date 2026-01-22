@@ -107,21 +107,27 @@ ggplot(homerange, aes(x = mean.mass.g, y = mean.hra.m2)) +
 ```
 
 **9. Use filter to extract the data for only birds and mammals. Then make a plot that compares the homerange sizes of these two groups. Be sure to include appropriate labels and a title.**
+
 ```{r}
 homerange %>%
-   filter(class%in% c("Mammalia", "Aves")) %>% 
-  ggplot(aes(x = class, y = mean.hra.m2, color=class)) +
+  filter(class %in% c("aves", "mammalia")) %>%
+  ggplot(aes(x = class, y = mean.hra.m2, color = class)) +
   geom_boxplot() +
   scale_y_log10() +
-  labs(title = "Homerange Sizes of Birds vs Mammals",
-       x = "Class",
-       y = "Mean Homerange Size") 
+  labs(
+    title = "Homerange Sizes of Birds vs Mammals",
+    x = "Class",
+    y = "Mean Homerange Size"
+  )
+summary(homerange$mean.hra.m2)
+
+
 ```
 
 **10. Do one additional exploratory analysis of your choice. Before writing the code, write the question you are trying to answer. The question should be biologically meaningful and appropriate for the data. It must include at least one `filter()`, `select()`, and `arrange()`.**
 ```{r}
 homerange %>% 
-  filter(class == "Mammalia") %>% 
+  filter(class == "mammalia") %>% 
   select(common.name, trophic.guild, mean.mass.g, mean.hra.m2) %>% 
   arrange(desc(mean.mass.g)) %>% 
   ggplot(aes(x = trophic.guild, y = mean.hra.m2, fill = trophic.guild)) +
