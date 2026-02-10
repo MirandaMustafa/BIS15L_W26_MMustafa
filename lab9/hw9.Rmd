@@ -28,56 +28,176 @@ For this homework, we will use a data set compiled by the Office of Environment 
 This homework loosely follows the tutorial of [R Ladies Sydney](https://rladiessydney.org/). If you get stuck, check it out!  
 
 1. Start by loading the data `sydneybeaches`. Do some exploratory analysis to get an idea of the data structure.
-```{r}
 
+
+```{r}
+sydneybeaches<- read.csv('data/sydneybeaches.csv') %>% 
+  clean_names()
 ```
 
+```{r}
+glimpse(sydneybeaches)
+```
+
+```{r}
+colnames(sydneybeaches)
+```
+
+```{r}
+summary(sydneybeaches)
+```
+
+```{r}
+head(sydneybeaches)
+```
 2. Are these data "tidy" per the definitions of the tidyverse? How do you know? Are they in wide or long format?
 ```{r}
-
+#The data is tidy because each variable has its own column, each observation has its own row, and each type of observational unit forms a table. The data are in long format they are stored in a single column rather than spread across multiple columns by date.
 ```
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 ```{r}
+names(sydneybeaches)
+
+```
+```{r}
+sydneybeaches_long <- sydneybeaches %>%
+  select(site, date, enterococci_cfu_100ml)
+
+glimpse(sydneybeaches_long)
 
 ```
 
 4. Pivot the data such that the dates are column names and each beach only appears once (wide format). Name the object `sydneybeaches_wide`
 ```{r}
+sydneybeaches_wide <- sydneybeaches_long %>%
+  pivot_wider(
+    names_from = date,
+    values_from = enterococci_cfu_100ml
+  )
 
+glimpse(sydneybeaches_wide)
 ```
 
 5. Pivot the data back so that the dates are data and not column names.
 ```{r}
+sydneybeaches_long <- sydneybeaches_wide %>%
+  pivot_longer(
+    cols = -site,
+    names_to = "date",
+    values_to = "enterococci_cfu_100ml"
+  )
 
+glimpse(sydneybeaches_long)
 ```
 
 6. We haven't dealt much with dates yet, but separate the date into columns day, month, and year. Do this on the `sydneybeaches_long` data.
 ```{r}
+sydneybeaches_long <- sydneybeaches_long %>%
+  mutate(Date = as.Date(date)) %>%
+  separate(
+    date,
+    into = c("year", "month", "day"),
+    sep = "-",
+    remove = FALSE
+  )
+
+glimpse(sydneybeaches_long)
 
 ```
 
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
 ```{r}
+names(sydneybeaches)
+```
+```{r}
+sydneybeaches_long <- sydneybeaches %>%
+  select(site, date, enterococci_cfu_100ml) %>%
+  mutate(
+    date = ymd(date),         
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  )
+
+```
+
+```{r}
+avg_enterococci_year <- sydneybeaches_long %>%
+  group_by(site, year) %>%
+  summarize(
+    mean_enterococci = mean(enterococci_cfu_100ml, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+avg_enterococci_year
 
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
 
+sydneybeaches <- sydneybeaches %>%
+  clean_names()
+
+colnames(sydneybeaches)
+
+
 ```
+```{r}
+sydneybeaches_long <- sydneybeaches %>%
+  select(site, date, enterococci_cfu_100ml)
+
+```
+
+```{r}
+sydneybeaches_long <- sydneybeaches_long %>%
+  mutate(
+    date = as.Date(date),
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  )
+
+avg_enterococci_year <- sydneybeaches_long %>%
+  group_by(site, year) %>%
+  summarize(
+    mean_enterococci = mean(enterococci_cfu_100ml, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+avg_enterococci_year
+
+
+```
+
+
 
 9. What was the most polluted beach in 2013?
 ```{r}
+sydneybeaches_long <- sydneybeaches_long %>%
+  mutate(
+    date = as.Date(date),
+    year = year(date)
+  )
+
 
 ```
 
 ```{r}
+avg_enterococci_year %>%
+  filter(year == 2013) %>%
+  arrange(desc(mean_enterococci)) %>%
+  slice(1)
+
 
 ```
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
 ```{r}
+sydneybeaches_long %>%
+  filter(enterococci_cfu_100ml > 200) %>%
+  count(site, sort = TRUE)
 
 ```
 

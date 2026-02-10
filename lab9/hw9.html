@@ -11,7 +11,7 @@
 
 <meta name="author" content="Your Name Here" />
 
-<meta name="date" content="2026-02-04" />
+<meta name="date" content="2026-02-10" />
 
 <title>Homework 9</title>
 
@@ -376,7 +376,7 @@ display: none;
 
 <h1 class="title toc-ignore">Homework 9</h1>
 <h4 class="author">Your Name Here</h4>
-<h4 class="date">2026-02-04</h4>
+<h4 class="date">2026-02-10</h4>
 
 </div>
 
@@ -410,30 +410,600 @@ the number of viable bacteria in a sample <a href="https://en.wikipedia.org/wiki
 <p>This homework loosely follows the tutorial of <a href="https://rladiessydney.org/">R Ladies Sydney</a>. If you get stuck,
 check it out!</p>
 <ol style="list-style-type: decimal">
-<li><p>Start by loading the data <code>sydneybeaches</code>. Do some
-exploratory analysis to get an idea of the data structure.</p></li>
-<li><p>Are these data “tidy” per the definitions of the tidyverse? How
-do you know? Are they in wide or long format?</p></li>
-<li><p>We are only interested in the variables site, date, and
-enterococci_cfu_100ml. Make a new object focused on these variables
-only. Name the object <code>sydneybeaches_long</code></p></li>
-<li><p>Pivot the data such that the dates are column names and each
-beach only appears once (wide format). Name the object
-<code>sydneybeaches_wide</code></p></li>
-<li><p>Pivot the data back so that the dates are data and not column
-names.</p></li>
-<li><p>We haven’t dealt much with dates yet, but separate the date into
-columns day, month, and year. Do this on the
-<code>sydneybeaches_long</code> data.</p></li>
-<li><p>What is the average <code>enterococci_cfu_100ml</code> by year
-for each beach. Think about which data you will use- long or
-wide.</p></li>
-<li><p>Make the output from question 7 easier to read by pivoting it to
-wide format.</p></li>
-<li><p>What was the most polluted beach in 2013?</p></li>
-<li><p>Explore the data! Do one analysis of your choice that includes a
-minimum of three lines of code.</p></li>
+<li>Start by loading the data <code>sydneybeaches</code>. Do some
+exploratory analysis to get an idea of the data structure.</li>
 </ol>
+<pre class="r"><code>sydneybeaches&lt;- read.csv(&#39;data/sydneybeaches.csv&#39;) %&gt;% 
+  clean_names()</code></pre>
+<pre class="r"><code>glimpse(sydneybeaches)</code></pre>
+<pre><code>## Rows: 3,690
+## Columns: 8
+## $ beach_id              &lt;dbl&gt; 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, …
+## $ region                &lt;chr&gt; &quot;Sydney City Ocean Beaches&quot;, &quot;Sydney City Ocean …
+## $ council               &lt;chr&gt; &quot;Randwick Council&quot;, &quot;Randwick Council&quot;, &quot;Randwic…
+## $ site                  &lt;chr&gt; &quot;Clovelly Beach&quot;, &quot;Clovelly Beach&quot;, &quot;Clovelly Be…
+## $ longitude             &lt;dbl&gt; 151.2675, 151.2675, 151.2675, 151.2675, 151.2675…
+## $ latitude              &lt;dbl&gt; -33.91449, -33.91449, -33.91449, -33.91449, -33.…
+## $ date                  &lt;chr&gt; &quot;02/01/2013&quot;, &quot;06/01/2013&quot;, &quot;12/01/2013&quot;, &quot;18/01…
+## $ enterococci_cfu_100ml &lt;int&gt; 19, 3, 2, 13, 8, 7, 11, 97, 3, 0, 6, 0, 1, 8, 3,…</code></pre>
+<pre class="r"><code>colnames(sydneybeaches)</code></pre>
+<pre><code>## [1] &quot;beach_id&quot;              &quot;region&quot;                &quot;council&quot;              
+## [4] &quot;site&quot;                  &quot;longitude&quot;             &quot;latitude&quot;             
+## [7] &quot;date&quot;                  &quot;enterococci_cfu_100ml&quot;</code></pre>
+<pre class="r"><code>summary(sydneybeaches)</code></pre>
+<pre><code>##     beach_id        region            council              site          
+##  Min.   :22.00   Length:3690        Length:3690        Length:3690       
+##  1st Qu.:24.00   Class :character   Class :character   Class :character  
+##  Median :26.00   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :25.87                                                           
+##  3rd Qu.:27.40                                                           
+##  Max.   :29.00                                                           
+##                                                                          
+##    longitude        latitude          date           enterococci_cfu_100ml
+##  Min.   :151.3   Min.   :-33.98   Length:3690        Min.   :   0.00      
+##  1st Qu.:151.3   1st Qu.:-33.95   Class :character   1st Qu.:   1.00      
+##  Median :151.3   Median :-33.92   Mode  :character   Median :   5.00      
+##  Mean   :151.3   Mean   :-33.93                      Mean   :  33.92      
+##  3rd Qu.:151.3   3rd Qu.:-33.90                      3rd Qu.:  17.00      
+##  Max.   :151.3   Max.   :-33.89                      Max.   :4900.00      
+##                                                      NA&#39;s   :29</code></pre>
+<pre class="r"><code>head(sydneybeaches)</code></pre>
+<pre><code>##   beach_id                    region          council           site longitude
+## 1       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+## 2       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+## 3       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+## 4       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+## 5       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+## 6       25 Sydney City Ocean Beaches Randwick Council Clovelly Beach  151.2675
+##    latitude       date enterococci_cfu_100ml
+## 1 -33.91449 02/01/2013                    19
+## 2 -33.91449 06/01/2013                     3
+## 3 -33.91449 12/01/2013                     2
+## 4 -33.91449 18/01/2013                    13
+## 5 -33.91449 30/01/2013                     8
+## 6 -33.91449 05/02/2013                     7</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Are these data “tidy” per the definitions of the tidyverse? How do
+you know? Are they in wide or long format?</li>
+</ol>
+<pre class="r"><code>#The data is tidy because each variable has its own column, each observation has its own row, and each type of observational unit forms a table. The data are in long format they are stored in a single column rather than spread across multiple columns by date.</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>We are only interested in the variables site, date, and
+enterococci_cfu_100ml. Make a new object focused on these variables
+only. Name the object <code>sydneybeaches_long</code></li>
+</ol>
+<pre class="r"><code>names(sydneybeaches)</code></pre>
+<pre><code>## [1] &quot;beach_id&quot;              &quot;region&quot;                &quot;council&quot;              
+## [4] &quot;site&quot;                  &quot;longitude&quot;             &quot;latitude&quot;             
+## [7] &quot;date&quot;                  &quot;enterococci_cfu_100ml&quot;</code></pre>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches %&gt;%
+  select(site, date, enterococci_cfu_100ml)
+
+glimpse(sydneybeaches_long)</code></pre>
+<pre><code>## Rows: 3,690
+## Columns: 3
+## $ site                  &lt;chr&gt; &quot;Clovelly Beach&quot;, &quot;Clovelly Beach&quot;, &quot;Clovelly Be…
+## $ date                  &lt;chr&gt; &quot;02/01/2013&quot;, &quot;06/01/2013&quot;, &quot;12/01/2013&quot;, &quot;18/01…
+## $ enterococci_cfu_100ml &lt;int&gt; 19, 3, 2, 13, 8, 7, 11, 97, 3, 0, 6, 0, 1, 8, 3,…</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Pivot the data such that the dates are column names and each beach
+only appears once (wide format). Name the object
+<code>sydneybeaches_wide</code></li>
+</ol>
+<pre class="r"><code>sydneybeaches_wide &lt;- sydneybeaches_long %&gt;%
+  pivot_wider(
+    names_from = date,
+    values_from = enterococci_cfu_100ml
+  )
+
+glimpse(sydneybeaches_wide)</code></pre>
+<pre><code>## Rows: 11
+## Columns: 345
+## $ site         &lt;chr&gt; &quot;Clovelly Beach&quot;, &quot;Coogee Beach&quot;, &quot;Gordons Bay (East)&quot;, &quot;…
+## $ `02/01/2013` &lt;int&gt; 19, 15, NA, 9, 2, 1, 1, 12, 3, 4, 1
+## $ `06/01/2013` &lt;int&gt; 3, 4, NA, 3, 4, 1, 0, 2, 1, 2, 0
+## $ `12/01/2013` &lt;int&gt; 2, 17, NA, 72, 390, 20, 33, 110, 2, 38, 7
+## $ `18/01/2013` &lt;int&gt; 13, 18, NA, 1, 15, 2, 2, 13, 1, 3, 22
+## $ `30/01/2013` &lt;int&gt; 8, 22, NA, 44, 13, 11, 13, 100, 6, 25, 23
+## $ `05/02/2013` &lt;int&gt; 7, 2, NA, 7, 13, 0, 0, 630, 5, 2, 3
+## $ `11/02/2013` &lt;int&gt; 11, 110, NA, 150, 140, 4, 30, 79, 600, 38, 13
+## $ `23/02/2013` &lt;int&gt; 97, 630, NA, 330, 390, 60, 92, 570, 67, 780, 90
+## $ `07/03/2013` &lt;int&gt; 3, 11, NA, 31, 6, 1, 13, 69, 1, 8, 3
+## $ `25/03/2013` &lt;int&gt; 0, 82, 4, 420, 28, 33, 17, 37, 0, 2, 4
+## $ `02/04/2013` &lt;int&gt; 6, 7, 1, 50, 12, 16, 0, 38, 1, 3, 2
+## $ `12/04/2013` &lt;int&gt; 0, 16, 0, 20, 8, 3, 2, 18, 1, 5, 1
+## $ `18/04/2013` &lt;int&gt; 1, 15, 1, 0, 3, 8, 8, 13, 7, 34, 3
+## $ `24/04/2013` &lt;int&gt; 8, 10, 13, 4, 6, 0, 6, 16, 0, 1, 3
+## $ `01/05/2013` &lt;int&gt; 3, 7, 0, 4, 32, 3, 0, 10, 2, 4, 2
+## $ `20/05/2013` &lt;int&gt; 5, 2, 1, 0, 5, 2, 2, NA, 1, 2, 1
+## $ `31/05/2013` &lt;int&gt; 0, 6, 2, 2, 4, 23, 2, NA, 1, 3, 0
+## $ `06/06/2013` &lt;int&gt; 8, 8, 0, 6, 3, 6, 0, NA, 0, 8, 2
+## $ `12/06/2013` &lt;int&gt; 2, 84, 660, 1, 9, 3, 0, NA, 79, 81, 690
+## $ `24/06/2013` &lt;int&gt; 35, 84, 41, 59, 20, 16, 27, NA, 9, 19, 15
+## $ `06/07/2013` &lt;int&gt; 2, 5, 2, 0, 0, 6, 3, NA, 26, 4, 5
+## $ `18/07/2013` &lt;int&gt; 2, 9, 4, 2, 9, 5, 3, NA, 5, 3, 0
+## $ `24/07/2013` &lt;int&gt; 57, 20, 43, 0, 170, 3, 1, NA, 120, 24, 32
+## $ `08/08/2013` &lt;int&gt; 39, 34, 13, 7, 54, 10, 5, NA, 16, 64, 61
+## $ `22/08/2013` &lt;int&gt; 0, 2, 4, 27, 1, 0, 1, NA, 2, 0, 2
+## $ `29/08/2013` &lt;int&gt; 0, 1, 1, 0, 2, 0, 0, NA, 0, 0, 0
+## $ `24/01/2013` &lt;int&gt; 0, 48, NA, 45, 110, 5, 28, 83, 9, 6, 5
+## $ `17/02/2013` &lt;int&gt; 9, 30, NA, 160, 23, 6, 1, 480, 14, 16, 11
+## $ `01/03/2013` &lt;int&gt; 20, 110, NA, 56, 24, 10, 450, 22, 360, 32, 270
+## $ `13/03/2013` &lt;int&gt; 0, 4, NA, 5, 9, 4, 2, 5, 0, 6, 0
+## $ `19/03/2013` &lt;int&gt; 0, 2, 56, 0, 4, 0, 21, 16, 6, 5, 2
+## $ `06/04/2013` &lt;int&gt; 28, 49, 27, 10, 52, 46, 16, 69, 69, 60, 54
+## $ `07/05/2013` &lt;int&gt; 0, 2, 0, 0, 5, 1, 0, NA, 2, 0, 2
+## $ `14/05/2013` &lt;int&gt; 3, 10, 5, 4, 40, 9, 3, NA, 3, 13, 2
+## $ `25/05/2013` &lt;int&gt; 9, 17, 8, 9, 50, 16, 16, NA, 19, 18, 9
+## $ `17/06/2013` &lt;int&gt; 15, 35, NA, 1, 40, 37, 47, NA, 10, 12, 21
+## $ `30/06/2013` &lt;int&gt; 50, 270, 42, 4900, 2500, 64, 66, NA, 300, 50, 210
+## $ `12/07/2013` &lt;int&gt; 1, 2, 8, 9, 2, 1, 1, NA, 0, 0, 1
+## $ `30/07/2013` &lt;int&gt; 1, 1, 0, 0, 11, 0, 2, NA, 0, 6, 3
+## $ `14/08/2013` &lt;int&gt; 0, 0, 0, 1, 5, 0, 0, NA, 0, 0, 2
+## $ `16/08/2013` &lt;int&gt; 0, 0, 0, 0, 1, 0, 0, NA, 0, 1, 0
+## $ `02/09/2013` &lt;int&gt; 0, 0, 0, 1, 1, 0, 2, NA, 0, 0, 0
+## $ `28/09/2013` &lt;int&gt; 0, 2, 0, 5, 5, 1, 3, 3, 2, 2, 0
+## $ `04/10/2013` &lt;int&gt; 0, 18, 0, 11, 6, 0, 1, 1, 0, 0, 2
+## $ `12/10/2013` &lt;int&gt; 1, 3, 0, 2, 4, 2, 0, 7, 0, 1, 0
+## $ `28/10/2013` &lt;int&gt; 1, 94, 3, 33, 50, 36, 120, 210, 5, 33, 14
+## $ `05/11/2013` &lt;int&gt; 6, 2, 8, 34, 26, 3, 0, 25, 27, 45, 4
+## $ `29/11/2013` &lt;int&gt; 34, 5, 46, 9, 4, 11, 5, 90, 1, 2, 1
+## $ `07/12/2013` &lt;int&gt; 5, 3, 1, 9, 9, 1, 0, 79, 0, 2, 2
+## $ `10/09/2013` &lt;int&gt; 0, 26, 1, 2, 10, 4, 1, NA, 0, 0, 0
+## $ `16/09/2013` &lt;int&gt; 1, 290, 5, 1, 6, 130, 2, 8, 32, 0, 39
+## $ `22/09/2013` &lt;int&gt; 3, 4, 5, 8, 1, 7, 4, 1, 4, 13, 2
+## $ `20/10/2013` &lt;int&gt; 3, 0, 3, 3, 10, 0, 1, 12, 1, 3, 1
+## $ `13/11/2013` &lt;int&gt; 2, 8, 2, 8, 7, 0, 0, 3, 3, 5, 6
+## $ `21/11/2013` &lt;int&gt; 1, 30, 12, 26, 5, 3, 20, 2, 5, 34, 35
+## $ `23/12/2013` &lt;int&gt; 1, 4, 0, 3, 10, 0, 3, 3, 9, 13, 8
+## $ `13/12/2013` &lt;int&gt; 1, 0, 0, 25, 13, 0, 6, 4, 0, 1, 2
+## $ `31/12/2013` &lt;int&gt; 12, 11, 68, 420, 1500, 2100, 1200, 630, 32, 16, 29
+## $ `08/10/2014` &lt;int&gt; 3, 620, 44, 51, 160, 87, 56, 61, 34, 3, 18
+## $ `16/10/2014` &lt;int&gt; 11, 8, 1, 27, 11, 1, 2, 35, 10, 1, 3
+## $ `25/10/2014` &lt;int&gt; 5, 4, 3, 52, 200, 15, 3, 7, 8, 7, 5
+## $ `02/11/2014` &lt;int&gt; 1, 30, 2, 1, 7, 1, 2, 8, 10, 1, 4
+## $ `10/11/2014` &lt;int&gt; 1, 0, 11, 120, 0, 3, 13, 5, 0, 8, 0
+## $ `18/11/2014` &lt;int&gt; 0, 3, 0, 3, 19, 1, 0, 5, 0, 7, 4
+## $ `13/12/2014` &lt;int&gt; 21, 42, 5, 15, 7, 2, 0, 14, 0, 5, 12
+## $ `19/12/2014` &lt;int&gt; 6, 25, 30, 21, 17, 6, 8, 8, 4, 1, 5
+## $ `16/01/2014` &lt;int&gt; 3, 16, 6, 1, 17, 32, 23, 29, 3, 14, 0
+## $ `24/01/2014` &lt;int&gt; 5, 20, 0, 20, 4, 5, 3, 16, 3, 4, 2
+## $ `09/02/2014` &lt;int&gt; 6, 4, 0, 8, 2, 1, 0, 3, 7, 1, 3
+## $ `25/02/2014` &lt;int&gt; 5, 40, 2, 7, 6, 28, 0, 5, 2, 10, 1
+## $ `05/03/2014` &lt;int&gt; 3, 19, 9, 3, 66, 3, 5, 18, 3, 24, 10
+## $ `06/04/2014` &lt;int&gt; 60, 160, 35, 2, 45, 4, 1, 270, 22, 510, 450
+## $ `06/05/2014` &lt;int&gt; 1, 7, 0, 8, 7, 2, 0, 7, 3, 2, 4
+## $ `16/05/2014` &lt;int&gt; 0, 6, 4, 2, 32, 3, 2, 5, 6, 9, 3
+## $ `22/05/2014` &lt;int&gt; 5, 10, 0, 3, 38, 2, 4, 2, 1, 0, 0
+## $ `10/06/2014` &lt;int&gt; 9, 570, 16, 22, 4, 0, 1, 8, 66, 56, 1100
+## $ `26/06/2014` &lt;int&gt; 0, 4, 0, 4, 110, 1, 2, 3, 0, 0, 9
+## $ `08/07/2014` &lt;int&gt; 0, 0, 2, 0, 2, 3, 26, 0, 1, 1, 1
+## $ `14/07/2014` &lt;int&gt; 1, 2, 0, 2, 2, 3, 0, 0, 0, 0, 0
+## $ `24/07/2014` &lt;int&gt; 0, 3, 0, 1, 4, 0, 0, 12, 0, 0, 0
+## $ `05/08/2014` &lt;int&gt; 0, 1, 0, 3, 31, 0, 0, 0, 1, 0, 1
+## $ `21/08/2014` &lt;int&gt; 2, 35, 4, 11, 10, 9, 4, 70, 3, 15, 44
+## $ `21/10/2014` &lt;int&gt; 4, 6, 0, 42, 8, 1, 0, 11, 1, 0, 0
+## $ `26/11/2014` &lt;int&gt; 1, 27, 32, 2, 12, 8, 3, 8, 24, 19, 14
+## $ `04/12/2014` &lt;int&gt; 53, 66, 17, 81, 990, 27, 34, 38, 46, 72, 78
+## $ `12/09/2014` &lt;int&gt; 0, 4, 2, 0, 2, 2, 2, 3, 4, 1, 7
+## $ `18/09/2014` &lt;int&gt; 0, 0, 0, 0, 2, 0, 0, 2, 1, 0, 0
+## $ `24/09/2014` &lt;int&gt; 0, 0, 1, 3, 9, 0, 0, 1, 1, 1, 0
+## $ `28/12/2014` &lt;int&gt; 360, 450, 450, 10, 10, 13, 5, 780, 13, 22, 10
+## $ `08/01/2014` &lt;int&gt; 3, 22, 3, 5, 3, 0, 0, 8, 6, 2, 28
+## $ `01/02/2014` &lt;int&gt; 8, 29, 5, 13, 35, 3, 3, 5, 15, 17, 13
+## $ `17/02/2014` &lt;int&gt; 50, 110, 89, 46, 140, 70, 39, 190, 140, 16, 110
+## $ `13/03/2014` &lt;int&gt; 22, 110, 23, 36, 58, 16, 15, 81, 39, 28, 33
+## $ `21/03/2014` &lt;int&gt; 12, 57, 31, 60, 4, 9, 1, 160, 7, 6, 5
+## $ `29/03/2014` &lt;int&gt; 4, 22, 24, 39, 170, 18, 460, 41, 14, 10, 6
+## $ `22/04/2014` &lt;int&gt; 3, 8, 0, 30, 16, 3, 3, 52, 2, 2, 2
+## $ `14/04/2014` &lt;int&gt; 14, 16, 4, 24, 11, 1, 0, 3, 17, 2, 6
+## $ `30/04/2014` &lt;int&gt; 11, 20, 8, 95, 180, 46, 43, 13, 10, 3, 7
+## $ `12/05/2014` &lt;int&gt; 4, 5, 0, 0, 60, 0, 0, 3, 1, 4, 0
+## $ `28/05/2014` &lt;int&gt; 2, 6, 5, 6, 50, 3, 2, 40, 7, 15, 14
+## $ `03/06/2014` &lt;int&gt; 2, NA, 0, 10, 12, 2, 0, 2, 1, 4, 1
+## $ `19/06/2014` &lt;int&gt; 1, 20, 0, 6, 4, 0, 0, 1, 4, 4, 2
+## $ `03/07/2014` &lt;int&gt; 0, 1, 0, 0, 33, 2, 0, 1, 1, 0, 68
+## $ `18/07/2014` &lt;int&gt; 0, 1, 0, 0, 25, 0, 0, 0, 2, 2, 0
+## $ `01/08/2014` &lt;int&gt; 1, 2, 1, 0, 14, 2, 2, 2, 2, 3, 2
+## $ `11/08/2014` &lt;int&gt; 0, 39, 0, 12, 110, 35, 2, 3, 5, 0, 0
+## $ `15/08/2014` &lt;int&gt; 1, 0, 1, 1, 12, 1, 1, 6, 3, 0, 4
+## $ `27/08/2014` &lt;int&gt; 7, 72, 13, 120, 67, 13, 21, 68, 30, 11, 3
+## $ `02/09/2014` &lt;int&gt; 0, 0, 0, 0, 2, 1, 0, 1, 0, 2, 0
+## $ `08/09/2014` &lt;int&gt; 4, 2, 2, 4, 44, 1, 0, 34, 2, 2, 2
+## $ `30/09/2014` &lt;int&gt; 18, 12, 0, 0, 4, 0, 0, 5, 2, 0, 4
+## $ `27/07/2015` &lt;int&gt; 1, 3, 0, 7, 6, 2, 0, 0, 0, 1, 3
+## $ `31/07/2015` &lt;int&gt; 0, 0, 0, 1, 13, 0, 1, 11, 3, 7, 5
+## $ `07/08/2015` &lt;int&gt; 0, 1, 0, 0, 8, 0, 0, 0, 0, 2, 1
+## $ `14/08/2015` &lt;int&gt; 0, 3, 0, 0, 39, 2, 0, 0, 3, 1, 0
+## $ `19/08/2015` &lt;int&gt; 19, 2, 3, 2, 7, 0, 0, 1, 9, 1, 1
+## $ `25/08/2015` &lt;int&gt; 30, 55, 14, 31, 19, 21, 17, 78, 18, 65, 42
+## $ `29/09/2015` &lt;int&gt; 0, 11, 0, 0, 36, 0, 1, 6, 1, 1, 2
+## $ `11/11/2015` &lt;int&gt; 5, 140, 33, 31, 82, 3, 12, 8, 8, 6, 450
+## $ `17/11/2015` &lt;int&gt; 2, 50, 2, 10, 4, 0, 8, 0, 6, 1, 15
+## $ `23/11/2015` &lt;int&gt; 13, 7, 1, 16, 58, 2, 0, 7, 0, 5, 1
+## $ `29/11/2015` &lt;int&gt; 2, 21, 3, 18, 140, 9, 2, 47, 3, 2, 1
+## $ `05/12/2015` &lt;int&gt; 1, 3, 0, 2, 4, 0, 0, 0, 0, 0, 0
+## $ `17/12/2015` &lt;int&gt; 17, 90, 5, 92, 100, 39, 42, 130, 38, 32, 28
+## $ `22/12/2015` &lt;int&gt; 75, 110, 47, 72, 180, 52, 29, 60, 64, 210, 690
+## $ `29/12/2015` &lt;int&gt; 0, 6, 1, 6, 8, 1, 0, 25, 3, 1, 2
+## $ `14/02/2015` &lt;int&gt; 6, 11, 1, 18, 16, 7, 3, 11, 36, 3, 1
+## $ `06/02/2015` &lt;int&gt; 6, 16, 9, 16, 61, 1, 1, 11, 1, 10, 1
+## $ `25/03/2015` &lt;int&gt; 11, 24, 12, 7, 31, 8, 4, 22, 42, 14, 32
+## $ `17/03/2015` &lt;int&gt; 12, 140, 0, 18, 6, 18, 10, 80, 3, 8, 7
+## $ `09/04/2015` &lt;int&gt; 12, 5, 19, 14, 10, 5, 4, 88, 16, 18, 4
+## $ `01/04/2015` &lt;int&gt; 44, 57, 26, 19, 50, 12, 5, 14, 25, 21, 43
+## $ `27/04/2015` &lt;int&gt; 29, 31, 70, 12, 21, 15, 2, 90, 27, 28, 20
+## $ `17/04/2015` &lt;int&gt; 4, 66, 1, 50, 900, 8, 1, 7, 7, 36, 10
+## $ `27/05/2015` &lt;int&gt; 3, 1, 40, 3, 0, 0, 1, 5, 4, NA, 7
+## $ `09/06/2015` &lt;int&gt; 1, 22, 1, 8, 2, 10, 2, 0, 3, 11, 5
+## $ `15/06/2015` &lt;int&gt; 3, 0, 0, 95, 12, 4, 3, 75, 4, 2, 1
+## $ `20/06/2015` &lt;int&gt; 4, 11, 5, 31, 12, 8, 6, 40, 4, 12, 3
+## $ `31/08/2015` &lt;int&gt; 10, 10, 2, 15, 13, 7, 6, 5, 4, 2, 3
+## $ `04/09/2015` &lt;int&gt; 7, 80, 21, 26, 110, 9, 9, 540, 21, 31, 42
+## $ `11/09/2015` &lt;int&gt; 4, 2, 0, 2, 7, 1, 0, 1, 2, 2, 1
+## $ `17/09/2015` &lt;int&gt; 0, 0, 1, 8, 6, 0, 0, 0, 10, 4, 0
+## $ `23/09/2015` &lt;int&gt; 6, 3, 8, 3, 120, 4, 10, 8, 3, 2, 29
+## $ `26/06/2015` &lt;int&gt; 1, 10, 2, 12, 4, 20, 2, 23, 8, 7, 5
+## $ `02/07/2015` &lt;int&gt; 0, 4, 1, 16, 78, 3, 5, 1, 6, 6, 5
+## $ `21/07/2015` &lt;int&gt; 3, 14, 2, 9, 8, 1, 5, 3, 7, 11, 2
+## $ `06/10/2015` &lt;int&gt; 1, 2, 17, 1, 7, 0, 0, 13, 0, 2, 1
+## $ `12/10/2015` &lt;int&gt; 3, 14, 1, 5, 18, 6, 3, 13, 5, 0, 3
+## $ `18/10/2015` &lt;int&gt; 1, 3, 0, 8, 12, 2, 0, 10, 5, 11, 2
+## $ `24/10/2015` &lt;int&gt; 2, 8, 1, 5, 4, 2, 0, 0, 3, 4, 2
+## $ `30/10/2015` &lt;int&gt; 12, 7, 10, 8, 120, 1, 55, 1, 0, 1, 0
+## $ `05/11/2015` &lt;int&gt; 9, 230, 31, 16, 11, 150, 13, 150, 31, 390, 410
+## $ `11/12/2015` &lt;int&gt; 1, 19, 25, 480, 360, 1, 4, 16, 4, 52, 16
+## $ `05/01/2015` &lt;int&gt; 2, 7, 3, 35, 570, 1, 1, 14, 4, 1, 4
+## $ `15/01/2015` &lt;int&gt; 0, 3, 0, 1, 10, 2, 2, 2, 2, 0, 1
+## $ `21/01/2015` &lt;int&gt; 6, 52, 10, 6, 110, 78, 8, 18, 6, 40, 10
+## $ `29/01/2015` &lt;int&gt; 15, 9, 5, 30, 8, 5, 1, 31, 5, 3, 8
+## $ `22/02/2015` &lt;int&gt; 1, 180, 48, 10, 8, 21, 13, 92, 4, 72, 42
+## $ `27/02/2015` &lt;int&gt; 16, 420, 28, 1, 2, 3, 0, 4, 9, 9, 300
+## $ `05/03/2015` &lt;int&gt; 1, 32, 35, 20, 24, 29, 5, 10, 16, 41, 4
+## $ `09/03/2015` &lt;int&gt; 0, 9, 0, 1, 45, 0, 1, 2, 8, 0, 4
+## $ `05/05/2015` &lt;int&gt; 2, 42, 1, 7, 4, 5, 9, 7, 18, 1, 2
+## $ `11/05/2015` &lt;int&gt; 5, 5, 1, 9, 40, 5, 6, 13, 4, 0, 17
+## $ `22/05/2015` &lt;int&gt; 84, 200, 1500, 86, 190, 180, 130, 840, 270, 46, 900
+## $ `17/05/2015` &lt;int&gt; 4, 17, 2, 21, 15, 30, 0, 40, 4, 26, 22
+## $ `03/06/2015` &lt;int&gt; 7, 1, 8, 7, 45, 1, 0, 2, 25, 21, 24
+## $ `08/07/2015` &lt;int&gt; 0, 25, 6, 22, 28, 32, 26, 19, 4, 25, 13
+## $ `15/07/2015` &lt;int&gt; 0, 5, 1, 4, 10, 2, 2, 0, 1, 13, 1
+## $ `04/01/2016` &lt;int&gt; 8, 26, 20, 4, 3, 10, 4, 2, 33, 83, 92
+## $ `28/01/2016` &lt;int&gt; 4, 15, 3, 4, 5, 2, 0, 12, 21, 21, 28
+## $ `21/02/2016` &lt;int&gt; 110, 780, 990, 69, 34, 19, 9, 8, 180, 1100, 1000
+## $ `27/02/2016` &lt;int&gt; 4, 17, 5, 8, 9, 1, 0, 2, 10, 6, 5
+## $ `04/03/2016` &lt;int&gt; 3, 8, 0, 3, 11, 0, 0, 0, 0, 30, 0
+## $ `22/03/2016` &lt;int&gt; 12, 21, 17, 19, 40, 12, 11, 23, 17, 29, 29
+## $ `04/04/2016` &lt;int&gt; 130, 450, 92, 840, 750, 110, 3, 200, 130, 660, 870
+## $ `29/03/2016` &lt;int&gt; 15, 20, 5, 5, 25, 13, 17, 32, 10, 7, 2
+## $ `20/04/2016` &lt;int&gt; 3, 25, 3, 8, 2, 6, 9, 9, 12, 3, 8
+## $ `04/05/2016` &lt;int&gt; 8, 6, 0, 51, 86, 4, 11, 7, 0, 0, 0
+## $ `17/05/2016` &lt;int&gt; 1, 1, 0, 1, 2, 22, 9, 16, 1, 10, 1
+## $ `03/06/2016` &lt;int&gt; 1, 15, 0, 33, 1200, 11, 1, 1600, 4, 5, 3
+## $ `21/06/2016` &lt;int&gt; 9, 140, 89, 7, 30, 56, 14, 20, 110, 84, 140
+## $ `28/06/2016` &lt;int&gt; 1, 4, 1, 4, 7, 12, 3, 6, 43, 61, 57
+## $ `08/07/2016` &lt;int&gt; 35, 30, 27, 7, 16, 2, 4, 10, 82, 25, 34
+## $ `21/07/2016` &lt;int&gt; 15, 61, 9, 59, 69, 16, 12, 85, 24, 31, 63
+## $ `27/07/2016` &lt;int&gt; 2, 6, 0, 7, 17, 1, 2, 29, 0, 3, 3
+## $ `02/08/2016` &lt;int&gt; 3, 3, 0, 0, 56, 1, 0, 4, 0, 3, 8
+## $ `09/08/2016` &lt;int&gt; 2, 16, 16, 4, 1, 10, 17, 0, 4, 10, 16
+## $ `15/08/2016` &lt;int&gt; 0, 3, 0, 1, 0, 3, 0, 3, 14, 1, 0
+## $ `26/08/2016` &lt;int&gt; 0, 5, 0, 4, 7, 2, 1, 8, 1, 0, 4
+## $ `10/01/2016` &lt;int&gt; 3, 8, 1, 35, 31, 2, 3, 35, 63, 5, 10
+## $ `16/01/2016` &lt;int&gt; 3, 18, 0, 2, 3, 1, 1, 21, 7, 4, 5
+## $ `22/01/2016` &lt;int&gt; 10, 58, 13, 29, 170, 20, 19, 65, 19, 36, 31
+## $ `03/02/2016` &lt;int&gt; 7, 10, 7, 4, 6, 7, 2, 12, 47, 0, 14
+## $ `09/02/2016` &lt;int&gt; 1, 10, 1, 12, 70, 0, 1, 5, 8, 7, 0
+## $ `15/02/2016` &lt;int&gt; 3, 10, 0, 0, 0, 1, 0, 0, 1, 2, 3
+## $ `10/03/2016` &lt;int&gt; 0, 18, 12, 6, 180, 60, 16, 2, 8, 0, 5
+## $ `16/03/2016` &lt;int&gt; 24, 71, 16, 31, 190, 3, 21, 210, 17, 62, 22
+## $ `08/04/2016` &lt;int&gt; 11, 17, 7, 6, 95, 8, 5, 14, 13, 2, 2
+## $ `15/04/2016` &lt;int&gt; 9, 41, 0, 11, 19, 9, 3, 2, 3, 12, 10
+## $ `28/04/2016` &lt;int&gt; 0, 5, 2, 5, 24, 2, 0, 3, 0, 250, 8
+## $ `10/05/2016` &lt;int&gt; 4, 40, 1, 66, 98, 16, 17, 9, 2, 6, 5
+## $ `23/05/2016` &lt;int&gt; 0, 16, 2, 6, 44, 3, 0, 3, 4, 3, 2
+## $ `09/06/2016` &lt;int&gt; 120, 130, 120, 55, 51, 320, 110, 110, 24, 74, 54
+## $ `16/06/2016` &lt;int&gt; 5, 3, 1, 6, 7, 6, 12, 8, 1, 1, 2
+## $ `05/07/2016` &lt;int&gt; 11, 28, 6, 63, 190, 2, 2, 2, 3, 5, 37
+## $ `15/07/2016` &lt;int&gt; 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 1
+## $ `19/08/2016` &lt;int&gt; 1, 2, 0, 3, 15, 1, 0, 3, 0, 0, 0
+## $ `07/09/2016` &lt;int&gt; 1, 0, 0, 1, 2, 0, 0, 2, 0, 1, 0
+## $ `14/09/2016` &lt;int&gt; 1, 33, 1, 160, 10, 16, 61, 120, 5, 17, 12
+## $ `12/10/2016` &lt;int&gt; 0, 5, 2, 1, 0, 0, 0, 0, 0, 6, 6
+## $ `25/10/2016` &lt;int&gt; 11, 3, 4, 5, 12, 5, 2, 3, 21, 4, 6
+## $ `31/10/2016` &lt;int&gt; 2, 5, 1, 23, 22, 8, 3, 6, 4, 5, 5
+## $ `05/11/2016` &lt;int&gt; 0, 6, 1, 0, 1, 0, 1, 3, 34, 0, NA
+## $ `17/11/2016` &lt;int&gt; 2, 16, 0, 4, 45, 7, 2, 14, 0, 2, 5
+## $ `01/09/2016` &lt;int&gt; 1, 0, 2, 6, 4, 1, 1, 3, 1, 1, 4
+## $ `20/09/2016` &lt;int&gt; 0, 8, 2, 17, 130, 1, 0, 5, 4, 1, 0
+## $ `26/09/2016` &lt;int&gt; 3, 6, 1, 2, 0, 1, 0, 8, 6, 3, 2
+## $ `30/09/2016` &lt;int&gt; 0, 0, 3, 2, 6, 4, 1, 60, 3, 2, 5
+## $ `18/10/2016` &lt;int&gt; 1, 1, 1, 1, 9, 3, 6, 2, 2, 7, 2
+## $ `10/11/2016` &lt;int&gt; 3, 37, 2, 5, 7, 4, 6, 18, 18, 10, 10
+## $ `05/12/2016` &lt;int&gt; 0, 40, 0, 7, 9, 37, 26, 0, 0, 24, 0
+## $ `12/12/2016` &lt;int&gt; 1, NA, 0, 0, 53, 5, 28, 16, 0, 2, 3
+## $ `23/11/2016` &lt;int&gt; 1, 23, 0, 1, 1, 0, 0, 0, 0, 15, 2
+## $ `30/11/2016` &lt;int&gt; 0, 46, 3, 7, 67, 0, 0, 1, 6, 25, 4
+## $ `16/12/2016` &lt;int&gt; 50, 1200, 810, 100, 1400, 690, 130, 600, 110, 840, 270
+## $ `22/12/2016` &lt;int&gt; 5, 21, 0, 8, 3, 2, 2, 17, 6, 2, 4
+## $ `29/12/2016` &lt;int&gt; 4, 66, 3, 15, 9, 10, 22, 42, 5, 8, 1
+## $ `24/06/2016` &lt;int&gt; NA, 4, NA, NA, 26, NA, NA, NA, NA, NA, NA
+## $ `23/06/2016` &lt;int&gt; NA, 3, NA, NA, 53, NA, NA, NA, NA, NA, NA
+## $ `22/06/2016` &lt;int&gt; NA, 9, NA, NA, 11, NA, NA, NA, NA, NA, NA
+## $ `20/06/2016` &lt;int&gt; NA, 22, NA, NA, 290, NA, NA, NA, NA, NA, NA
+## $ `23/01/2017` &lt;int&gt; 3, 5, 0, 7, 0, 1, 4, 4, 5, 4, 1
+## $ `30/01/2017` &lt;int&gt; 8, 42, 1, 7, 30, 0, 4, 15, 3, 8, 5
+## $ `04/02/2017` &lt;int&gt; 2, 39, 3, 9, 1, 4, 3, 3, 2, 10, 1
+## $ `15/02/2017` &lt;int&gt; 12, 19, 12, 6, 9, 1, 0, 10, 27, 7, 35
+## $ `21/02/2017` &lt;int&gt; 3, 7, 0, 2, 2, 1, 2, 2, 2, 8, 2
+## $ `27/10/2017` &lt;int&gt; 24, 60, 20, 48, 170, 15, 28, 900, 60, 21, 25
+## $ `09/11/2017` &lt;int&gt; 1, 18, 4, 1, 4, 0, 0, 21, 2, 4, 3
+## $ `08/12/2017` &lt;int&gt; 3, 5, 9, 3, 7, 1, 2, 1, 3, 4, 0
+## $ `20/12/2017` &lt;int&gt; 2, 4, 0, 46, 49, 27, 21, 1, 1, 2, 28
+## $ `05/01/2017` &lt;int&gt; 1, 49, 2, 9, 0, 7, 0, 0, 3, 9, 3
+## $ `11/01/2017` &lt;int&gt; 5, 42, 260, 47, 310, 50, 60, 22, 15, 41, 12
+## $ `17/01/2017` &lt;int&gt; 2, 16, 0, 6, 7, 0, 0, 0, 0, 2, 0
+## $ `09/02/2017` &lt;int&gt; 10, 16, 18, 34, 11, 8, 10, 26, 24, 60, 15
+## $ `09/03/2017` &lt;int&gt; 7, 12, 4, 1, 29, 1, 0, 9, 1, 7, 3
+## $ `07/04/2017` &lt;int&gt; 16, 24, 40, 3, 27, 6, 9, 10, 6, 9, 15
+## $ `21/04/2017` &lt;int&gt; 6, 2, 2, 0, 4, 0, 0, 2, 5, 8, 7
+## $ `03/11/2017` &lt;int&gt; 8, 8, 1, 23, 21, 16, 3, 13, 10, 7, 8
+## $ `15/11/2017` &lt;int&gt; 2, 0, 1, 2, 5, 0, 0, 3, 1, 2, 2
+## $ `21/11/2017` &lt;int&gt; 0, 11, 1, 7, 32, 9, 17, 6, 3, 4, 0
+## $ `27/11/2017` &lt;int&gt; 3, 3, 1, 2, 1, 0, 0, 2, 6, 6, 0
+## $ `04/12/2017` &lt;int&gt; 9, 69, 42, 56, 180, 20, 20, 13, 130, 110, 65
+## $ `14/12/2017` &lt;int&gt; 2, 12, 4, 0, 21, 0, 1, 7, 1, 2, 0
+## $ `28/12/2017` &lt;int&gt; 0, 6, 2, 5, 1, 6, 1, 1, 1, 1, 0
+## $ `27/02/2017` &lt;int&gt; 28, 38, 150, 270, 300, 14, 16, 50, 19, 27, 15
+## $ `03/03/2017` &lt;int&gt; 30, 140, 56, 200, 230, 73, 36, 190, 110, 130, 390
+## $ `16/03/2017` &lt;int&gt; 15, 30, 19, 48, 2, 18, 25, 34, 20, 34, 18
+## $ `22/03/2017` &lt;int&gt; 100, 14, 6, 46, 46, 28, 36, 42, 28, 26, 200
+## $ `28/03/2017` &lt;int&gt; 4, 10, 8, 23, 900, 11, 5, 31, 17, 32, 21
+## $ `03/04/2017` &lt;int&gt; 32, 80, 50, 5, 14, 20, 16, 720, 42, 180, 110
+## $ `13/04/2017` &lt;int&gt; 0, 20, 9, 22, 16, 10, 10, 80, 25, 7, 5
+## $ `28/04/2017` &lt;int&gt; 5, 4, 9, 9, 27, 0, 37, 2, 14, 4, 3
+## $ `10/05/2017` &lt;int&gt; 0, 20, 2, 3, 29, 0, 3, 0, 2, 0, 0
+## $ `16/05/2017` &lt;int&gt; 2, 61, 0, 8, 26, 5, 9, 3, 0, 1, 1
+## $ `22/05/2017` &lt;int&gt; 12, 60, 4, 8, 60, 210, 16, 16, 8, 20, 14
+## $ `08/06/2017` &lt;int&gt; 68, 76, 22, 20, 60, 12, 14, 96, 44, 35, 54
+## $ `30/06/2017` &lt;int&gt; 1, 2, 3, 2, 11, 3, 2, 1, 19, 17, 27
+## $ `11/07/2017` &lt;int&gt; 0, 0, 0, 1, 17, 0, 4, 2, 10, 1, 0
+## $ `28/07/2017` &lt;int&gt; 7, 7, 0, 6, 33, 13, 2, 2, 6, 2, 2
+## $ `09/08/2017` &lt;int&gt; 2, 5, 2, 4, 11, 0, 0, 5, 1, 0, 1
+## $ `29/08/2017` &lt;int&gt; 0, 1, 6, 0, 0, 0, 1, 0, 0, 2, 0
+## $ `01/09/2017` &lt;int&gt; 3, 1, 1, 0, 5, 0, 0, 0, 2, 3, 3
+## $ `07/09/2017` &lt;int&gt; 4, 3, 5, 16, 3, 2, 0, 2, 14, 12, 7
+## $ `19/09/2017` &lt;int&gt; 0, 1, 2, 0, 0, 9, 13, 0, 20, 22, 26
+## $ `04/05/2017` &lt;int&gt; 5, 37, 2, 7, 25, 41, 2, 6, 1, 9, 6
+## $ `29/05/2017` &lt;int&gt; 0, 10, 2, 1, 50, 7, 2, 15, 0, 4, 3
+## $ `01/06/2017` &lt;int&gt; 4, 4, 1, 3, 20, 0, 0, 0, 4, 3, 4
+## $ `14/06/2017` &lt;int&gt; 5, 13, 12, 14, 16, 6, 11, 120, 15, 30, 45
+## $ `20/06/2017` &lt;int&gt; 9, 30, 2, 3, 110, 7, 6, 62, 4, 13, 7
+## $ `26/06/2017` &lt;int&gt; 0, 6, 2, 10, 32, 4, 27, 100, 5, 7, 1
+## $ `17/07/2017` &lt;int&gt; 1, 6, 0, 0, 12, 4, 1, 0, 1, 2, 0
+## $ `24/07/2017` &lt;int&gt; 1, 96, 3, 3, 15, 12, 2, 3, 2, 13, 9
+## $ `03/08/2017` &lt;int&gt; 1, 12, 3, 45, 17, 6, 3, 160, 13, 16, 11
+## $ `16/08/2017` &lt;int&gt; 1, 1, 0, 0, 4, 3, 1, 4, 0, 2, 0
+## $ `22/08/2017` &lt;int&gt; 4, 2, 1, 0, 2, 0, 0, 5, 10, 3, 3
+## $ `13/09/2017` &lt;int&gt; 0, 1, 3, 2, 0, 5, 1, 0, 3, 5, 4
+## $ `25/09/2017` &lt;int&gt; 1, 0, 0, 2, 6, 1, 13, 1, 1, 4, 0
+## $ `29/09/2017` &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+## $ `05/10/2017` &lt;int&gt; 0, 5, 1, 1, 3, 3, 0, 0, 1, 3, 0
+## $ `11/10/2017` &lt;int&gt; 3, 2, 1, 1, 10, 2, 1, 5, 17, 7, 4
+## $ `17/10/2017` &lt;int&gt; 0, 4, 1, 0, 0, 2, 0, 0, 1, 1, 1
+## $ `23/10/2017` &lt;int&gt; 7, 11, 18, 6, 10, 3, 4, 34, 14, 11, 17
+## $ `09/05/2017` &lt;int&gt; NA, 4, NA, NA, NA, NA, NA, NA, NA, NA, NA
+## $ `25/10/2017` &lt;int&gt; NA, NA, NA, NA, 42, NA, NA, NA, NA, NA, NA
+## $ `19/09/2018` &lt;int&gt; 1, 18, 0, 3, 3, 1, 3, 5, 2, 6, 7
+## $ `28/09/2018` &lt;int&gt; 2, 0, 0, 2, 52, 2, 0, 0, 2, 3, 0
+## $ `05/10/2018` &lt;int&gt; 34, 47, 140, 110, 54, 9, 9, 1300, 130, 200, 76
+## $ `11/10/2018` &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+## $ `16/10/2018` &lt;int&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
+## $ `03/01/2018` &lt;int&gt; 1, 21, 15, 10, 65, 22, 18, 17, 12, 29, 16
+## $ `09/01/2018` &lt;int&gt; 71, 360, 52, 2100, 110, 110, 300, 1600, 200, 1400, 100
+## $ `15/01/2018` &lt;int&gt; 30, 12, 340, 50, 9, 10, 10, 4, 250, 72, 110
+## $ `25/01/2018` &lt;int&gt; 6, 3, 1, 1, 1, 2, 1, 0, 12, 5, 4
+## $ `13/02/2018` &lt;int&gt; 2, 61, 2, 19, 320, 1, 3, 13, 120, 14, 4
+## $ `20/03/2018` &lt;int&gt; 5, 5, 53, 3, 17, 1, 3, 0, 4, 5, 4
+## $ `26/03/2018` &lt;int&gt; 23, 26, 7, 1, 32, 4, 8, 15, 17, 32, 27
+## $ `10/04/2018` &lt;int&gt; 8, 8, 1, 2, 12, 1, 8, 31, 3, 0, 3
+## $ `16/04/2018` &lt;int&gt; 1, 0, 49, 54, 260, 6, 8, 6, 2, 0, 0
+## $ `27/04/2018` &lt;int&gt; 32, 2, 1, 79, 9, 0, 3, 2, 8, 3, 0
+## $ `07/05/2018` &lt;int&gt; 5, 4, 0, 4, 16, 4, 3, 10, 10, 10, 2
+## $ `11/05/2018` &lt;int&gt; 3, 8, 2, 4, 38, 4, 0, 1, 11, 9, 20
+## $ `23/05/2018` &lt;int&gt; 2, 6, 0, 0, 5, 0, 1, 0, 1, 2, 1
+## $ `29/05/2018` &lt;int&gt; 5, 0, 2, 3, 12, 0, 0, 200, NA, 5, 1
+## $ `10/07/2018` &lt;int&gt; 24, 31, 23, 9, 160, 23, 21, 76, 28, 28, 40
+## $ `01/08/2018` &lt;int&gt; 3, 5, 0, 15, 11, 1, 0, 1, 1, 0, 0
+## $ `14/08/2018` &lt;int&gt; 0, 1, 0, 3, 42, 0, 11, 0, 1, 0, 0
+## $ `24/08/2018` &lt;int&gt; 2, 65, 11, 54, 10, 48, 45, 27, 39, 56, 51
+## $ `12/09/2018` &lt;int&gt; 3, 8, 2, 7, 24, 0, 0, 50, 0, 3, 0
+## $ `24/09/2018` &lt;int&gt; 6, 2, 1, 7, 40, 1, 1, 29, 1, 3, 0
+## $ `19/01/2018` &lt;int&gt; 30, 3, 1, 33, 27, 1, 2, 10, 2, 3, 3
+## $ `01/02/2018` &lt;int&gt; 3, 42, 24, 19, 50, 50, 46, 52, 48, 30, 35
+## $ `07/02/2018` &lt;int&gt; 0, 5, 8, 0, 1, 0, 0, 1, 12, 1, 1
+## $ `19/02/2018` &lt;int&gt; 0, 6, 1, 2, 33, 0, 1, 1, 9, 1, 3
+## $ `25/02/2018` &lt;int&gt; 23, 23, 2, 3, 6, 25, 11, 13, 2, 10, 1
+## $ `02/03/2018` &lt;int&gt; 46, 45, 33, 76, 40, 0, 5, 6, 4, 32, 10
+## $ `08/03/2018` &lt;int&gt; 0, 0, 2, 2, 1, 0, 1, 1, 0, 7, 0
+## $ `14/03/2018` &lt;int&gt; 45, 45, 20, 18, 26, 7, 13, 30, 27, 7, 32
+## $ `03/04/2018` &lt;int&gt; NA, 6, 4, 15, 130, NA, 6, 18, 3, 3, 2
+## $ `20/04/2018` &lt;int&gt; NA, 8, 1, 0, 90, 7, 2, 0, 8, 14, 7
+## $ `02/05/2018` &lt;int&gt; 3, 22, 0, 26, 3, 2, 6, 4, 3, 4, 6
+## $ `17/05/2018` &lt;int&gt; 12, 8, 2, 4, 10, 1, 1, 4, 2, 1, 1
+## $ `04/06/2018` &lt;int&gt; 0, 14, 2, 5, 13, 10, 6, 19, 3, 4, 5
+## $ `08/06/2018` &lt;int&gt; 21, 15, 8, 13, 10, 21, 4, 1700, 6, 12, 5
+## $ `14/06/2018` &lt;int&gt; 3, 11, 3, 19, 3, 3, 1, 33, 21, 24, 2
+## $ `21/06/2018` &lt;int&gt; 6, 38, 16, 26, 14, 28, 14, 24, 21, 24, 140
+## $ `27/06/2018` &lt;int&gt; 9, 15, 11, 6, 7, 3, 0, 18, 16, 7, 9
+## $ `04/07/2018` &lt;int&gt; 2, 3, 2, 2, 22, 6, 12, 9, NA, 5, 2
+## $ `16/07/2018` &lt;int&gt; 2, 4, 0, 16, 3, 1, 2, 5, 2, 1, 3
+## $ `20/07/2018` &lt;int&gt; 0, 6, 0, 3, 5, 6, 1, 6, 5, 3, 1
+## $ `26/07/2018` &lt;int&gt; 0, 0, 0, 4, 4, 0, 2, 0, 1, 1, 2
+## $ `08/08/2018` &lt;int&gt; 2, 0, 0, 2, 0, 1, 0, 3, 0, 0, 1
+## $ `21/08/2018` &lt;int&gt; 2, 3, 0, 0, 0, 0, 1, 0, 2, 0, 2
+## $ `30/08/2018` &lt;int&gt; 10, 9, 3, 1, 9, 8, 7, 15, 0, 4, 4
+## $ `05/09/2018` &lt;int&gt; 1, 11, 0, 0, 17, 3, 0, 26, 1, 1, 0</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Pivot the data back so that the dates are data and not column
+names.</li>
+</ol>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches_wide %&gt;%
+  pivot_longer(
+    cols = -site,
+    names_to = &quot;date&quot;,
+    values_to = &quot;enterococci_cfu_100ml&quot;
+  )
+
+glimpse(sydneybeaches_long)</code></pre>
+<pre><code>## Rows: 3,784
+## Columns: 3
+## $ site                  &lt;chr&gt; &quot;Clovelly Beach&quot;, &quot;Clovelly Beach&quot;, &quot;Clovelly Be…
+## $ date                  &lt;chr&gt; &quot;02/01/2013&quot;, &quot;06/01/2013&quot;, &quot;12/01/2013&quot;, &quot;18/01…
+## $ enterococci_cfu_100ml &lt;int&gt; 19, 3, 2, 13, 8, 7, 11, 97, 3, 0, 6, 0, 1, 8, 3,…</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>We haven’t dealt much with dates yet, but separate the date into
+columns day, month, and year. Do this on the
+<code>sydneybeaches_long</code> data.</li>
+</ol>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches_long %&gt;%
+  mutate(Date = as.Date(date)) %&gt;%
+  separate(
+    date,
+    into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;),
+    sep = &quot;-&quot;,
+    remove = FALSE
+  )</code></pre>
+<pre><code>## Warning: Expected 3 pieces. Missing pieces filled with `NA` in 3784 rows [1, 2, 3, 4, 5,
+## 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].</code></pre>
+<pre class="r"><code>glimpse(sydneybeaches_long)</code></pre>
+<pre><code>## Rows: 3,784
+## Columns: 7
+## $ site                  &lt;chr&gt; &quot;Clovelly Beach&quot;, &quot;Clovelly Beach&quot;, &quot;Clovelly Be…
+## $ date                  &lt;chr&gt; &quot;02/01/2013&quot;, &quot;06/01/2013&quot;, &quot;12/01/2013&quot;, &quot;18/01…
+## $ year                  &lt;chr&gt; &quot;02/01/2013&quot;, &quot;06/01/2013&quot;, &quot;12/01/2013&quot;, &quot;18/01…
+## $ month                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+## $ day                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …
+## $ enterococci_cfu_100ml &lt;int&gt; 19, 3, 2, 13, 8, 7, 11, 97, 3, 0, 6, 0, 1, 8, 3,…
+## $ Date                  &lt;date&gt; 0002-01-20, 0006-01-20, 0012-01-20, 0018-01-20,…</code></pre>
+<ol start="7" style="list-style-type: decimal">
+<li>What is the average <code>enterococci_cfu_100ml</code> by year for
+each beach. Think about which data you will use- long or wide.</li>
+</ol>
+<pre class="r"><code>names(sydneybeaches)</code></pre>
+<pre><code>## [1] &quot;beach_id&quot;              &quot;region&quot;                &quot;council&quot;              
+## [4] &quot;site&quot;                  &quot;longitude&quot;             &quot;latitude&quot;             
+## [7] &quot;date&quot;                  &quot;enterococci_cfu_100ml&quot;</code></pre>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches %&gt;%
+  select(site, date, enterococci_cfu_100ml) %&gt;%
+  mutate(
+    date = ymd(date),         
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  )</code></pre>
+<pre><code>## Warning: There was 1 warning in `mutate()`.
+## ℹ In argument: `date = ymd(date)`.
+## Caused by warning:
+## ! All formats failed to parse. No formats found.</code></pre>
+<pre class="r"><code>avg_enterococci_year &lt;- sydneybeaches_long %&gt;%
+  group_by(site, year) %&gt;%
+  summarize(
+    mean_enterococci = mean(enterococci_cfu_100ml, na.rm = TRUE),
+    .groups = &quot;drop&quot;
+  )
+
+avg_enterococci_year</code></pre>
+<pre><code>## # A tibble: 11 × 3
+##    site                     year mean_enterococci
+##    &lt;chr&gt;                   &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Bondi Beach                NA             18.8
+##  2 Bronte Beach               NA             31.4
+##  3 Clovelly Beach             NA             10.2
+##  4 Coogee Beach               NA             39.4
+##  5 Gordons Bay (East)         NA             24.9
+##  6 Little Bay Beach           NA             45.6
+##  7 Malabar Beach              NA             68.1
+##  8 Maroubra Beach             NA             20.2
+##  9 South Maroubra Beach       NA             15.7
+## 10 South Maroubra Rockpool    NA             63.9
+## 11 Tamarama Beach             NA             35.7</code></pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Make the output from question 7 easier to read by pivoting it to
+wide format.</li>
+</ol>
+<pre class="r"><code>sydneybeaches &lt;- sydneybeaches %&gt;%
+  clean_names()
+
+colnames(sydneybeaches)</code></pre>
+<pre><code>## [1] &quot;beach_id&quot;              &quot;region&quot;                &quot;council&quot;              
+## [4] &quot;site&quot;                  &quot;longitude&quot;             &quot;latitude&quot;             
+## [7] &quot;date&quot;                  &quot;enterococci_cfu_100ml&quot;</code></pre>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches %&gt;%
+  select(site, date, enterococci_cfu_100ml)</code></pre>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches_long %&gt;%
+  mutate(
+    date = as.Date(date),
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  )
+
+avg_enterococci_year &lt;- sydneybeaches_long %&gt;%
+  group_by(site, year) %&gt;%
+  summarize(
+    mean_enterococci = mean(enterococci_cfu_100ml, na.rm = TRUE),
+    .groups = &quot;drop&quot;
+  )
+
+avg_enterococci_year</code></pre>
+<pre><code>## # A tibble: 341 × 3
+##    site         year mean_enterococci
+##    &lt;chr&gt;       &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Bondi Beach     1             46  
+##  2 Bondi Beach     2              3  
+##  3 Bondi Beach     3             24.4
+##  4 Bondi Beach     4             33.3
+##  5 Bondi Beach     5             17.3
+##  6 Bondi Beach     6             15.2
+##  7 Bondi Beach     7              5  
+##  8 Bondi Beach     8             16.2
+##  9 Bondi Beach     9             24.8
+## 10 Bondi Beach    10             19  
+## # ℹ 331 more rows</code></pre>
+<ol start="9" style="list-style-type: decimal">
+<li>What was the most polluted beach in 2013?</li>
+</ol>
+<pre class="r"><code>sydneybeaches_long &lt;- sydneybeaches_long %&gt;%
+  mutate(
+    date = as.Date(date),
+    year = year(date)
+  )</code></pre>
+<pre class="r"><code>avg_enterococci_year %&gt;%
+  filter(year == 2013) %&gt;%
+  arrange(desc(mean_enterococci)) %&gt;%
+  slice(1)</code></pre>
+<pre><code>## # A tibble: 0 × 3
+## # ℹ 3 variables: site &lt;chr&gt;, year &lt;dbl&gt;, mean_enterococci &lt;dbl&gt;</code></pre>
+<ol start="10" style="list-style-type: decimal">
+<li>Explore the data! Do one analysis of your choice that includes a
+minimum of three lines of code.</li>
+</ol>
+<pre class="r"><code>sydneybeaches_long %&gt;%
+  filter(enterococci_cfu_100ml &gt; 200) %&gt;%
+  count(site, sort = TRUE)</code></pre>
+<pre><code>##                       site  n
+## 1            Malabar Beach 18
+## 2  South Maroubra Rockpool 17
+## 3           Tamarama Beach 14
+## 4             Coogee Beach 12
+## 5             Bronte Beach  9
+## 6         Little Bay Beach  8
+## 7       Gordons Bay (East)  7
+## 8              Bondi Beach  5
+## 9           Maroubra Beach  4
+## 10    South Maroubra Beach  4
+## 11          Clovelly Beach  1</code></pre>
 </div>
 <div id="knit-and-upload" class="section level2">
 <h2>Knit and Upload</h2>
