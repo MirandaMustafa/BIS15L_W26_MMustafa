@@ -13,9 +13,9 @@ Answer the following questions and complete the exercises in RMarkdown. Please e
 Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
 
 1. List your group members' names below.  
-
+Kenta Hsu, Marko Danchack
 2. Provide a link to your project repository. There should be only _one_ project repository per group. The owner needsto add group members as collaborators along with `jmledford3115` and `bryshalm`.  
-
+https://github.com/MirandaMustafa/BIS15L_W26_Group_Project
 3. Inside your repository, create a data folder. Inside the data folder, put copies of the candidate datasets you found along with the original articles.  
 
 ## Knit and Upload
