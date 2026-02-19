@@ -1,0 +1,22 @@
+---
+title: "Homework 12"
+author: "Your Name Here"
+date: "`r Sys.Date()`"
+output:
+  html_document: 
+    theme: spacelab
+---
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your final lab report should be organized, clean, and run free from errors. Remember, you must remove the `#` for the included code chunks to run. Be sure to add your name to the author header above.  
+
+Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
+
+1. List your group members' names below.  
+
+2. Provide a link to your project repository. There should be only _one_ project repository per group. The owner needsto add group members as collaborators along with `jmledford3115` and `bryshalm`.  
+
+3. Inside your repository, create a data folder. Inside the data folder, put copies of the candidate datasets you found along with the original articles.  
+
+## Knit and Upload
+Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean! 
