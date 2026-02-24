@@ -11,7 +11,7 @@
 
 <meta name="author" content="Your Name Here" />
 
-<meta name="date" content="2026-02-18" />
+<meta name="date" content="2026-02-23" />
 
 <title>Homework 13</title>
 
@@ -376,7 +376,7 @@ display: none;
 
 <h1 class="title toc-ignore">Homework 13</h1>
 <h4 class="author">Your Name Here</h4>
-<h4 class="date">2026-02-18</h4>
+<h4 class="date">2026-02-23</h4>
 
 </div>
 
@@ -408,24 +408,266 @@ birds, mammals, and reptiles.” <em>Ecology</em>, <em>96</em>, 3109. doi:
 <pre class="r"><code>amniota &lt;- read_csv(&quot;data/amniota.csv&quot;) %&gt;% 
   clean_names()</code></pre>
 <ol style="list-style-type: decimal">
-<li><p>Do some exploratory analysis of the <code>amniota</code> data
-set. Use the function(s) of your choice. Try to get an idea of how NA’s
-are represented in the data.</p></li>
-<li><p>Make any necessary replacements in the data such that all NA’s
-appear as “NA”.</p></li>
-<li><p>How many total NA’s are in the data set? Use the package
+<li>Do some exploratory analysis of the <code>amniota</code> data set.
+Use the function(s) of your choice. Try to get an idea of how NA’s are
+represented in the data.</li>
+</ol>
+<pre class="r"><code>amniota &lt;- read_csv(&quot;data/amniota.csv&quot;) %&gt;% 
+  clean_names()</code></pre>
+<pre><code>## Rows: 21322 Columns: 36
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (6): class, order, family, genus, species, common_name
+## dbl (30): subspecies, female_maturity_d, litter_or_clutch_size_n, litters_or...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Make any necessary replacements in the data such that all NA’s
+appear as “NA”.</li>
+</ol>
+<pre class="r"><code>summary(amniota) </code></pre>
+<pre><code>##     class              order              family             genus          
+##  Length:21322       Length:21322       Length:21322       Length:21322      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##    species            subspecies   common_name        female_maturity_d 
+##  Length:21322       Min.   :-999   Length:21322       Min.   :-30258.7  
+##  Class :character   1st Qu.:-999   Class :character   1st Qu.:  -999.0  
+##  Mode  :character   Median :-999   Mode  :character   Median :  -999.0  
+##                     Mean   :-999                      Mean   :  -723.7  
+##                     3rd Qu.:-999                      3rd Qu.:  -999.0  
+##                     Max.   :-999                      Max.   :  9131.2  
+##  litter_or_clutch_size_n litters_or_clutches_per_y adult_body_mass_g  
+##  Min.   :-999.000        Min.   :-999.0            Min.   :     -999  
+##  1st Qu.:-999.000        1st Qu.:-999.0            1st Qu.:        4  
+##  Median :   1.692        Median :-999.0            Median :       24  
+##  Mean   :-383.909        Mean   :-766.8            Mean   :    29107  
+##  3rd Qu.:   3.200        3rd Qu.:-999.0            3rd Qu.:      135  
+##  Max.   : 156.000        Max.   :  52.0            Max.   :149000000  
+##  maximum_longevity_y  gestation_d       weaning_d     
+##  Min.   :-999.000    Min.   :-999.0   Min.   :-999.0  
+##  1st Qu.:-999.000    1st Qu.:-999.0   1st Qu.:-999.0  
+##  Median :-999.000    Median :-999.0   Median :-999.0  
+##  Mean   :-737.061    Mean   :-874.9   Mean   :-892.4  
+##  3rd Qu.:   1.083    3rd Qu.:-999.0   3rd Qu.:-999.0  
+##  Max.   : 211.000    Max.   :7396.9   Max.   :1826.2  
+##  birth_or_hatching_weight_g weaning_weight_g     egg_mass_g     
+##  Min.   :   -999.00         Min.   :    -999   Min.   :-999.00  
+##  1st Qu.:   -999.00         1st Qu.:    -999   1st Qu.:-999.00  
+##  Median :   -999.00         Median :    -999   Median :-999.00  
+##  Mean   :    -88.57         Mean   :    1116   Mean   :-739.64  
+##  3rd Qu.:   -999.00         3rd Qu.:    -999   3rd Qu.:   0.56  
+##  Max.   :2250000.00         Max.   :17000000   Max.   :1500.00  
+##   incubation_d    fledging_age_d    longevity_y       male_maturity_d 
+##  Min.   :-999.0   Min.   :-999.0   Min.   :-999.000   Min.   :-999.0  
+##  1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.000   1st Qu.:-999.0  
+##  Median :-999.0   Median :-999.0   Median :-999.000   Median :-999.0  
+##  Mean   :-820.5   Mean   :-909.4   Mean   :-737.821   Mean   :-827.8  
+##  3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:   1.042   3rd Qu.:-999.0  
+##  Max.   :1762.0   Max.   : 345.0   Max.   : 177.000   Max.   :9131.2  
+##  inter_litter_or_interbirth_interval_y female_body_mass_g  male_body_mass_g   
+##  Min.   :-999.000                      Min.   :   -999.0   Min.   :   -999.0  
+##  1st Qu.:-999.000                      1st Qu.:   -999.0   1st Qu.:   -999.0  
+##  Median :-999.000                      Median :   -999.0   Median :   -999.0  
+##  Mean   :-932.502                      Mean   :     40.6   Mean   :   1242.9  
+##  3rd Qu.:-999.000                      3rd Qu.:     14.5   3rd Qu.:     13.3  
+##  Max.   :   4.847                      Max.   :3700000.0   Max.   :4545000.0  
+##  no_sex_body_mass_g   egg_width_mm    egg_length_mm    fledging_mass_g 
+##  Min.   :     -999   Min.   :-999.0   Min.   :-999.0   Min.   :-999.0  
+##  1st Qu.:     -999   1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.0  
+##  Median :     -999   Median :-999.0   Median :-999.0   Median :-999.0  
+##  Mean   :    30689   Mean   :-970.5   Mean   :-968.9   Mean   :-984.6  
+##  3rd Qu.:       28   3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:-999.0  
+##  Max.   :136000000   Max.   : 125.0   Max.   : 455.0   Max.   :9992.0  
+##   adult_svl_cm       male_svl_cm     female_svl_cm    birth_or_hatching_svl_cm
+##  Min.   :-999.000   Min.   :-999.0   Min.   :-999.0   Min.   :-999.0          
+##  1st Qu.:-999.000   1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.0          
+##  Median :-999.000   Median :-999.0   Median :-999.0   Median :-999.0          
+##  Mean   :-656.153   Mean   :-985.1   Mean   :-947.4   Mean   :-940.3          
+##  3rd Qu.:   9.499   3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:-999.0          
+##  Max.   :3049.000   Max.   : 315.2   Max.   :1125.0   Max.   : 760.0          
+##  female_svl_at_maturity_cm female_body_mass_at_maturity_g no_sex_svl_cm   
+##  Min.   :-999.0            Min.   :  -999.0               Min.   :-999.0  
+##  1st Qu.:-999.0            1st Qu.:  -999.0               1st Qu.:-999.0  
+##  Median :-999.0            Median :  -999.0               Median :-999.0  
+##  Mean   :-989.4            Mean   :  -980.6               Mean   :-747.1  
+##  3rd Qu.:-999.0            3rd Qu.:  -999.0               3rd Qu.:-999.0  
+##  Max.   : 580.0            Max.   :194000.0               Max.   :3300.0  
+##  no_sex_maturity_d
+##  Min.   : -999.0  
+##  1st Qu.: -999.0  
+##  Median : -999.0  
+##  Mean   : -942.6  
+##  3rd Qu.: -999.0  
+##  Max.   :14610.0</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>How many total NA’s are in the data set? Use the package
 <code>naniar</code> to produce a summary, including percentages, of
-missing data in each column for the <code>amniota</code> data.</p></li>
-<li><p>Double check your replacement using <code>summary</code>. Do you
-see any other potential issues? If so, fix them.</p></li>
-<li><p>Use <code>naniar</code> to visualize the number of NA’s in each
-variable. Which variables have the most NA’s?</p></li>
-<li><p>Calculate the number of NAs in the <code>egg_mass_g</code> column
+missing data in each column for the <code>amniota</code> data.</li>
+</ol>
+<pre class="r"><code>amniota_no_na &lt;-
+  read_csv(&quot;data/amniota.csv&quot;, na=&quot;-999&quot;) %&gt;% 
+  clean_names() %&gt;%
+  mutate(adult_body_mass_g=na_if(adult_body_mass_g, 0)) %&gt;%
+  mutate(birth_or_hatching_weight_g=na_if(birth_or_hatching_weight_g, 0)) %&gt;% 
+  mutate(female_maturity_d=na_if(female_maturity_d,-30258.711 )) %&gt;% 
+  mutate(adult_body_mass_g=na_if(adult_body_mass_g, 149000000)) %&gt;%
+  mutate(adult_body_mass_g=na_if(adult_body_mass_g, 80000000)) %&gt;%
+  mutate(adult_body_mass_g=na_if(adult_body_mass_g, 100000000))</code></pre>
+<pre><code>## Warning: One or more parsing issues, call `problems()` on your data frame for details,
+## e.g.:
+##   dat &lt;- vroom(...)
+##   problems(dat)</code></pre>
+<pre><code>## Rows: 21322 Columns: 36
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (6): class, order, family, genus, species, common_name
+## dbl (28): female_maturity_d, litter_or_clutch_size_n, litters_or_clutches_pe...
+## lgl  (2): subspecies, female_body_mass_at_maturity_g
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>amniota_no_na &lt;- amniota_no_na %&gt;%
+  mutate(adult_body_mass_g = as.integer(adult_body_mass_g))</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Double check your replacement using <code>summary</code>. Do you see
+any other potential issues? If so, fix them.</li>
+</ol>
+<pre class="r"><code>amniota_no_na %&gt;%
+miss_var_summary()</code></pre>
+<pre><code>## # A tibble: 36 × 3
+##    variable                       n_miss pct_miss
+##    &lt;chr&gt;                           &lt;int&gt;    &lt;num&gt;
+##  1 subspecies                      21322    100  
+##  2 female_body_mass_at_maturity_g  21322    100  
+##  3 female_svl_at_maturity_cm       21120     99.1
+##  4 fledging_mass_g                 21111     99.0
+##  5 male_svl_cm                     21040     98.7
+##  6 no_sex_maturity_d               20860     97.8
+##  7 egg_width_mm                    20727     97.2
+##  8 egg_length_mm                   20702     97.1
+##  9 weaning_weight_g                20258     95.0
+## 10 female_svl_cm                   20242     94.9
+## # ℹ 26 more rows</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Use <code>naniar</code> to visualize the number of NA’s in each
+variable. Which variables have the most NA’s?</li>
+</ol>
+<pre class="r"><code>summary(amniota_no_na)</code></pre>
+<pre><code>##     class              order              family             genus          
+##  Length:21322       Length:21322       Length:21322       Length:21322      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##    species          subspecies     common_name        female_maturity_d
+##  Length:21322       Mode:logical   Length:21322       Min.   :  23.81  
+##  Class :character   NA&#39;s:21322     Class :character   1st Qu.: 289.00  
+##  Mode  :character                  Mode  :character   Median : 365.12  
+##                                                       Mean   : 726.85  
+##                                                       3rd Qu.: 819.34  
+##                                                       Max.   :9131.25  
+##                                                       NA&#39;s   :17853    
+##  litter_or_clutch_size_n litters_or_clutches_per_y adult_body_mass_g 
+##  Min.   :  0.900         Min.   : 0.120            Min.   :       0  
+##  1st Qu.:  2.000         1st Qu.: 1.000            1st Qu.:      14  
+##  Median :  2.800         Median : 1.050            Median :      44  
+##  Mean   :  3.826         Mean   : 1.752            Mean   :   23764  
+##  3rd Qu.:  4.150         3rd Qu.: 2.000            3rd Qu.:     238  
+##  Max.   :156.000         Max.   :52.000            Max.   :38800000  
+##  NA&#39;s   :8244            NA&#39;s   :16374             NA&#39;s   :4647      
+##  maximum_longevity_y  gestation_d        weaning_d      
+##  Min.   :  0.0833    Min.   :   5.00   Min.   :   1.94  
+##  1st Qu.:  6.0000    1st Qu.:  29.91   1st Qu.:  27.75  
+##  Median : 12.3083    Median :  63.92   Median :  51.60  
+##  Mean   : 16.4657    Mean   : 105.28   Mean   : 113.05  
+##  3rd Qu.: 22.0000    3rd Qu.: 151.88   3rd Qu.: 129.83  
+##  Max.   :211.0000    Max.   :7396.92   Max.   :1826.25  
+##  NA&#39;s   :15822       NA&#39;s   :18926     NA&#39;s   :19279    
+##  birth_or_hatching_weight_g weaning_weight_g      egg_mass_g      
+##  Min.   :0.000e+00          Min.   :9.000e-01   Min.   :   0.218  
+##  1st Qu.:1.300e+00          1st Qu.:1.320e+01   1st Qu.:   2.100  
+##  Median :5.890e+00          Median :4.310e+01   Median :   5.100  
+##  Mean   :4.480e+03          Mean   :4.139e+04   Mean   :  22.252  
+##  3rd Qu.:4.385e+01          3rd Qu.:8.503e+02   3rd Qu.:  20.100  
+##  Max.   :2.250e+06          Max.   :1.700e+07   Max.   :1500.000  
+##  NA&#39;s   :17779              NA&#39;s   :20258       NA&#39;s   :15907     
+##   incubation_d     fledging_age_d   longevity_y       male_maturity_d  
+##  Min.   :   2.00   Min.   :  1.0   Min.   :  0.0833   Min.   :  30.44  
+##  1st Qu.:  17.00   1st Qu.: 16.5   1st Qu.:  5.5000   1st Qu.: 365.00  
+##  Median :  29.25   Median : 27.5   Median : 10.7000   Median : 365.25  
+##  Mean   :  46.67   Mean   : 36.8   Mean   : 13.5209   Mean   : 787.16  
+##  3rd Qu.:  59.50   3rd Qu.: 46.0   3rd Qu.: 18.2000   3rd Qu.: 913.00  
+##  Max.   :1762.00   Max.   :345.0   Max.   :177.0000   Max.   :9131.25  
+##  NA&#39;s   :17682     NA&#39;s   :19478   NA&#39;s   :15822      NA&#39;s   :19278    
+##  inter_litter_or_interbirth_interval_y female_body_mass_g  male_body_mass_g   
+##  Min.   :0.0465                        Min.   :      0.3   Min.   :      0.3  
+##  1st Qu.:0.3184                        1st Qu.:     14.0   1st Qu.:     16.5  
+##  Median :0.9993                        Median :     40.7   Median :     48.4  
+##  Mean   :0.9067                        Mean   :   2075.8   Mean   :   6196.8  
+##  3rd Qu.:1.0000                        3rd Qu.:    220.0   3rd Qu.:    245.5  
+##  Max.   :4.8467                        Max.   :3700000.0   Max.   :4545000.0  
+##  NA&#39;s   :19904                         NA&#39;s   :14113       NA&#39;s   :14679      
+##  no_sex_body_mass_g   egg_width_mm    egg_length_mm    fledging_mass_g  
+##  Min.   :        0   Min.   :  2.50   Min.   :  2.50   Min.   :   4.85  
+##  1st Qu.:       13   1st Qu.:  8.00   1st Qu.: 10.94   1st Qu.:  14.60  
+##  Median :       35   Median : 13.00   Median : 19.98   Median :  24.80  
+##  Mean   :    68952   Mean   : 22.99   Mean   : 36.40   Mean   : 452.27  
+##  3rd Qu.:      164   3rd Qu.: 35.90   3rd Qu.: 58.92   3rd Qu.: 107.00  
+##  Max.   :136000000   Max.   :125.00   Max.   :455.00   Max.   :9992.00  
+##  NA&#39;s   :11663       NA&#39;s   :20727    NA&#39;s   :20702    NA&#39;s   :21111    
+##   adult_svl_cm      male_svl_cm     female_svl_cm      birth_or_hatching_svl_cm
+##  Min.   :   1.79   Min.   :  1.57   Min.   :   1.800   Min.   :  0.400         
+##  1st Qu.:   9.50   1st Qu.: 21.41   1st Qu.:   5.756   1st Qu.:  2.450         
+##  Median :  18.50   Median : 35.85   Median :   8.150   Median :  3.300         
+##  Mean   :  38.20   Mean   : 50.44   Mean   :  20.609   Mean   : 12.099         
+##  3rd Qu.:  40.50   3rd Qu.: 63.39   3rd Qu.:  17.721   3rd Qu.:  5.256         
+##  Max.   :3049.00   Max.   :315.20   Max.   :1125.000   Max.   :759.999         
+##  NA&#39;s   :14274     NA&#39;s   :21040    NA&#39;s   :20242      NA&#39;s   :20085           
+##  female_svl_at_maturity_cm female_body_mass_at_maturity_g no_sex_svl_cm   
+##  Min.   :  2.85            Mode:logical                   Min.   :   1.7  
+##  1st Qu.:  4.90            NA&#39;s:21322                     1st Qu.:   5.7  
+##  Median :  6.00                                           Median :   7.7  
+##  Mean   : 18.69                                           Mean   :  20.0  
+##  3rd Qu.:  8.40                                           3rd Qu.:  11.0  
+##  Max.   :580.00                                           Max.   :3300.0  
+##  NA&#39;s   :21120                                            NA&#39;s   :16052   
+##  no_sex_maturity_d
+##  Min.   :   33.0  
+##  1st Qu.:  365.3  
+##  Median :  913.1  
+##  Mean   : 1604.5  
+##  3rd Qu.: 2008.9  
+##  Max.   :14610.0  
+##  NA&#39;s   :20860</code></pre>
+<pre class="r"><code># subspecies and female body mass at maturity g have the most NA&#39;s</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Calculate the number of NAs in the <code>egg_mass_g</code> column
 sorted by taxonomic class; i.e. how many NA’s are present in the
 <code>egg_mass_g</code> column in birds, mammals, and reptiles? Does
 this results make sense biologically? How do these results affect your
-interpretation of NA’s?</p></li>
+interpretation of NA’s?</li>
 </ol>
+<pre class="r"><code>amniota_no_na %&gt;%
+  group_by(class) %&gt;%
+  summarise(egg_mass_na = sum(is.na(egg_mass_g))) </code></pre>
+<pre><code>## # A tibble: 3 × 2
+##   class    egg_mass_na
+##   &lt;chr&gt;          &lt;int&gt;
+## 1 Aves            4914
+## 2 Mammalia        4953
+## 3 Reptilia        6040</code></pre>
+<pre class="r"><code>amniota_no_na %&gt;%
+  ggplot(aes(x = class)) +
+  geom_miss_point(aes(y = egg_mass_g))</code></pre>
+<p><img role="img" aria-label src="data:image/png;base64,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OgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4CGuV6bhkGS3IdTJCQOgholOu5ZRgsyXUwQULqIKBRrueWYbAk18EECamDgEa5nluGwZJcBxMkpA4C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" alt width="672" /></p>
+<pre class="r"><code># we only have values for reptiles so we can&#39;t interpret anything about birds or mammals from this section of data. It might be missing for mammals an absence of egg which makes sense biologically. For birds it might not have been measured. </code></pre>
 </div>
 <div id="knit-and-upload" class="section level2">
 <h2>Knit and Upload</h2>
