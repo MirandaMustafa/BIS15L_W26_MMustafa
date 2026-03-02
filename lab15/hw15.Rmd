@@ -1,6 +1,6 @@
 ---
 title: "Homework 15"
-author: "Your Name Here"
+author: "Miranda Mustafa"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -30,13 +30,56 @@ elephants <- read_csv("data/elephants_data/elephants.csv") %>%
 
 1. There are only three variables in the data. Two are continuous (age, height) and one is categorical (sex). Build an app that compares the range of age and height by sex. Users should be able to select either age or height. Make the app neat, clean, and professional. Use `shinydashboard` to improve the aesthetics of your app.
 ```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  dashboardHeader(title = "African Elephant Data"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Dashboard", tabName = "dashboard", icon = icon("elephant")),
+      # User Selection for variable
+      selectInput("var", 
+                  "Select Variable to Compare:",
+                  choices = c("Age" = "age", "Height" = "height"),
+                  selected = "age"))),
+  dashboardBody(
+    fluidRow(
+      box(title = "Range Comparison by Sex", 
+          status = "primary", 
+          solidHeader = TRUE, 
+          width = 12,
+          plotOutput("elephantPlot"))),
+    fluidRow(
+      box(title = "Summary Statistics", 
+          status = "info", 
+          width = 12,
+          tableOutput("summaryTable"))))
 
+
+shinyApp(ui, server)
 ```
 
 2. In addition to the .Rmd file, save your app as a standalone R script called `elephants.csv`.
 
 ```{r}
-#make sure you have a read
+server <- function(input, output) {
+  
+  output$elephantPlot <- renderPlot({
+    ggplot(elephants, aes_string(x = "sex", y = input$var, fill = "sex")) +
+      geom_boxplot(alpha = 0.7, outlier.colour = "red") +
+      labs(title = paste("Distribution of", str_to_title(input$var), "by Sex"),
+           y = str_to_title(input$var),
+           x = "Sex") +
+      theme_minimal() +
+      scale_fill_brewer(palette = "Set2")})
+  
+  output$summaryTable <- renderTable({
+    elephants %>%
+      group_by(sex) %>%
+      summarise(
+        Count = n(),
+        Mean = mean(get(input$var)),
+        Min = min(get(input$var)),
+        Max = max(get(input$var)))})}
+
 ```
 
 
