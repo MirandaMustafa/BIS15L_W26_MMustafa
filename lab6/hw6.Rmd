@@ -1,6 +1,6 @@
 ---
 title: "Homework 6"
-author: "Your Name Here"
+author: "Catalina De Amorrortu"
 date: "`r Sys.Date()`"
 output:
   html_document: 
@@ -11,7 +11,7 @@ output:
 Answer the following questions and/or complete the exercises in RMarkdown. Please embed all of your code and push the final work to your repository. Your report should be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run.  
 
 ## Load the tidyverse
-```{r}
+```{r message=FALSE, warning=FALSE}
 library("tidyverse")
 library("janitor")
 ```
@@ -23,124 +23,61 @@ Reference: Koerner SE, Poulsen JR, Blanchard EJ, Okouyi J, Clark CJ. Vertebrate 
 
 **1. Load `IvindoData_DryadVersion.csv` and store it as a new object called `gabon`.**
 ```{r}
-
-gabon <- read.csv("IvindoData_DryadVersion.csv")
-
-gabon<- read_csv("data/IvindoData_DryadVersion.csv")%>% clean_names
-
+gabon <- read_csv("data/IvindoData_DryadVersion.csv") %>% clean_names()
 ```
 
 **2. Use one or more of the summary functions you have learned to get an idea of the structure of the data.**  
 ```{r}
-
-str(gabon)
-summary(gabon)
-head(gabon)
-
-summary(gabon)
-
+glimpse(gabon)
 ```
 
 **3. Clean the data as necessary following the conventions from lab 6.**
 ```{r}
-
-library(tidyverse)
-
-gabon_clean <- gabon %>% 
-  filter(!is.na("TransectID")) %>% 
-  drop_na()
-
-
+clean_names(gabon)
 ```
 
 ```{r}
-
-glimpse(gabon_clean)
-
 
 ```
 
 **4. Use `mutate()` Change the variables `HuntCat`, `LandUse`, and `TransectID` to factors. Be sure to store the output as a new dataframe and use it for the remaining questions.**
 ```{r}
-
-#gabon_factors <- gabon_clean %>% 
- # mutate(
-  #  HuntCat = as.factor(HuntCat),
-   # LandUse = as.factor(LandUse),
-    #TransectID = as.factor(TransectID)
-#  )
-
-
-
+newgabon <- 
+  gabon %>% 
+  mutate(across(c(hunt_cat, land_use, transect_id), as.factor))
 ```
 
 **5. Make a plot that shows the number of transects for each land use type.**
 ```{r}
-#gabon_factors %>% 
- # count(LandUse)
-
-
+newgabon %>% 
+  select(land_use, transect_id) %>% 
+  ggplot(mapping = aes(x = land_use)) +
+  geom_bar(mapping = aes(fill = land_use))
 ```
 
 ```{r}
-
-#gabon_factors %>% 
- # ggplot(aes(x = LandUse, fill = LandUse)) +
-  #geom_bar() +
-  #labs(
-   # title = "Number of Transects by Land Use Type",
-    #x = "Land Use Type",
-    #y = "Number of Transects"
-#  )
-
 
 ```
 
 **6. How does vegetation richness compare among land use types?**
 ```{r}
-#gabon_factors %>% 
- # group_by(LandUse) %>% 
-  #summarize(
-   # mean_all_species_div = mean(Diversity_AllSpecies)
-#  ) %>% 
- # arrange(desc(mean_all_species_div))
-
-```
-
-```{r}
-## group_by(LandUse) %>% 
-  #summarize(
-#  #  mean_all_species_div = mean(Diversity_AllSpecies)
-#  ) %>% 
-#  arrange(desc(mean_all_species_div))
-
+newgabon %>% 
+  select(land_use, veg_rich) %>% 
+  ggplot(mapping = aes(x = land_use, y = veg_rich)) +
+  geom_boxplot(mapping = aes(fill = land_use)) + 
+  labs(title = "Vegetation Among Land Use Types", x = "Land Use Type", y = "Vegetation Richness")
 ```
 
 **7. For which land use type (national parks, logging, or neither) is average all species diversity the greatest?**
 ```{r}
-#colnames(gabon_factors)
+newgabon %>% 
+  select(diversity_all_species, land_use) %>% 
+  ggplot(mapping = aes(x = land_use, y = diversity_all_species)) +
+  geom_boxplot(mapping = aes(fill = land_use)) +
+  labs(title = "Total Species Diversity by Land Use Type", x = "Land Use Type", y = "Total Species Diversity")
 ```
 
 ```{r}
-#gabon_factors %>% 
- # group_by(LandUse) %>% 
-  #summarize(
-   # mean_all_species_div = mean(Diversity_AllSpecies)
-#  ) %>% 
- # arrange(desc(mean_all_species_div))
-
-```
-
-```{r}
-
-#gabon_factors %>% 
- # ggplot(aes(x = LandUse, y = Diversity_AllSpecies, fill=LandUse)) +
-  ##geom_boxplot() +
-##   title = "All Species Diversity by Land Use Type",
-  #  x = "Land Use Type",
-   # y = "All Species Diversity"
-#  )
-
 
 ```
 
@@ -154,58 +91,30 @@ glimpse(gabon_clean)
 
 **8. Is there a relationship between vegetation richness and mammal species richness?**
 ```{r}
-
-#colnames(gabon_factors)
-```
-
-```{r}
-#gabon_factors %>% 
-#  ggplot(aes(x = Veg_Rich, y = Rich_MammalSpecies)) +
-#  geom_point() +
-#  geom_smooth(method = "lm", se = FALSE) +
- # labs(
-  #  title = "Vegetation Richness vs Mammal Species Richness",
- #   x = "Vegetation Richness",
- #   y = "Mammal Species Richness"
-#  )
-
-
+newgabon %>% 
+  select(veg_rich, rich_mammal_species) %>% 
+  ggplot(mapping = aes(x = veg_rich, y = rich_mammal_species)) +
+  geom_point() +
+  labs(title = "Vegetation and Mammal Species Richness", x = "Vegetation Richness", y = "Mammal Species Richness")
 ```
 
 **9. Use `filter` to find all transects that have greater than 15 tree species or a breast height diameter between 50 and 60cm.  **
 ```{r}
-
-names(gabon)
+newgabon %>% 
+  select(transect_id, veg_rich, distance) %>% 
+  filter(veg_rich > 15.00 | (distance > 50 & distance < 60))
 ```
 
 ```{r}
-#gabon_factors %>% 
-  #filter(Veg_Rich > 15 | (Veg_DBH >= 50 & Veg_DBH <= 60))
-
-
-
-```
-
-```{r}
-
-#gabon_factors %>% 
- # filter(Veg_Rich > 15 | (Veg_DBH >= 50 & Veg_DBH <= 60)) %>% 
-  #select(TransectID, LandUse, Veg_Rich, Veg_DBH)
-
-
 
 ```
 
 **10.Which transects and land use types have more than 10 tree species and 10 mammal species? Use `arrange()` to sort by the number of tree species.**
 ```{r}
-
-#gabon_factors %>% 
- # filter(Veg_Rich > 10, Rich_MammalSpecies > 10) %>% 
-  ##arrange(desc(Veg_Rich)) %>% 
-  #select(TransectID, LandUse, Veg_Rich, Rich_MammalSpecies)
-
-
-
+newgabon %>% 
+  select(transect_id, veg_rich, rich_mammal_species) %>% 
+  filter(veg_rich > 10 & rich_mammal_species > 10) %>% 
+  arrange(veg_rich)
 ```
 
 ## Knit and Upload

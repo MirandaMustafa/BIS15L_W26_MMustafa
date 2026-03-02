@@ -30,6 +30,8 @@ gestation <- read_csv("data/Data_S1.csv") %>%
 
 ```{r}
 names(gestation)
+
+msleep$order
 ```
 
 ## Aesthetics
@@ -37,6 +39,40 @@ There are many ways to adjust shiny apps for better visual appeal. Let's start w
 
 1. Build an app that allows users to select a mammalian `order` and a variable of interest (body mass, longevity, or gestation length) and then plots the density distribution of that variable for the selected order.
 ```{r, eval=F, echo=T}
+library(shiny)
+
+ui <- fluidPage(
+  
+  titlePanel("Distribution of Gestation Length by Order"),
+  
+  
+  selectInput("x",
+               "Select Order",
+               choices = sort(unique(gestation$order)),
+               selected = "Afrosoricida"),
+  
+   selectInput("y",
+              "Select Variable",
+              choices = c("bodymass", "longevity",
+                          "gestationlength"),
+              selected = "bodymass"),
+   
+    plotOutput("plot", width = "500px", height = "400px")
+
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    
+    gestation %>% 
+      filter(input$x == .data[["order"]]) %>% 
+      ggplot(aes(.data[[input$y]])) +
+      geom_density(fill = "pink", color = "black", alpha = 0.5) +
+      theme_linedraw()
+  })
+}
+
+shinyApp(ui, server)
 
 ```
 
@@ -63,12 +99,85 @@ shinyApp(ui, server)
 
 Let's add our ui and server elements to make a functional dashboard. We will put our ui elements in the `dashboardBody()`. For now, we will turn off the sidebar.
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- dashboardPage(
+  
+  dashboardHeader(title = "Distribution of Gestation Length by Order"),
+  
+  dashboardSidebar(disable = T),
+  
+  dashboardBody(
+    
+    selectInput("x",
+               "Select Order",
+               choices = sort(unique(gestation$order)),
+               selected = "Afrosoricida"),
+  
+   selectInput("y",
+              "Select Variable",
+              choices = c("bodymass", "longevity",
+                          "gestationlength"),
+              selected = "bodymass"),
+    plotOutput("plot", width = "500px", height = "400px")
+    
+  )
+  
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
 ```
 
 Now let's add our server functions.
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- dashboardPage(
+  
+  dashboardHeader(title = "Distribution of Gestation Length by Order"),
+  
+  dashboardSidebar(
+    
+    selectInput("x",
+               "Select Order",
+               choices = sort(unique(gestation$order)),
+               selected = "Afrosoricida"),
+  
+   selectInput("y",
+              "Select Variable",
+              choices = c("bodymass", "longevity",
+                          "gestationlength"),
+              selected = "bodymass")
+  ),
+   
+   dashboardBody(
+    plotOutput("plot", width = "500px", height = "400px")
+    
+  )
+  
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    
+    gestation %>% 
+      filter(input$x == .data[["order"]]) %>% 
+      ggplot(aes(.data[[input$y]])) +
+      geom_density(fill = "pink", color = "black", alpha = 0.5) +
+      theme_linedraw()
+  })
+}
+
+shinyApp(ui, server)
+```
+
+
+```{r}
+?dashboardHeader
 ```
 
 What if you want to turn on the sidebar and put the inputs there? We can do that by moving the `selectInput()` functions to the `dashboardSidebar()`.
@@ -100,7 +209,40 @@ wolves %>%
 ```
 
 ```{r, eval=F, echo=T}
+library(shiny)
 
+ui <- dashboardPage(
+  
+  dashboardHeader(title = "Distribution of Gestation Length by Order"),
+  
+  dashboardSidebar(disable = T),
+   
+   dashboardBody(
+     selectInput("x",
+               "Select Population",
+               choices = sort(unique(wolves$pop)),
+               selected = "AK.PEN"),
+     
+    plotOutput("plot", width = "500px", height = "400px")
+    
+  )
+  
+)
+
+server <- function(input, output, session) {
+  
+output$plot <- renderPlot({
+  
+     wolves %>% 
+      filter(pop == input$x) %>% 
+      ggplot(aes(x = sex, fill = sex)) +
+      geom_bar() +
+      theme_linedraw()
+})
+  
+}
+
+shinyApp(ui, server)
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)

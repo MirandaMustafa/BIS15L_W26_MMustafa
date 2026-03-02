@@ -19,29 +19,33 @@ output:
 5. Select columns and rows and use summary functions.   
 6. Write your data frame to a csv file!  
 
+##Working directory
 
-
-##working directories 
 ```{r}
-getwd()# by defualt you are in the directory you first opened
-#setwd() 
+getwd() #by default you are in the directory that you first opened.
+#setwd()
 ```
+
+
+
 ## Load the tidyverse
 A library is a collection of R functions and data sets. The [tidyverse](https://tidyverse.org/) is a collection of R packages designed for data science. For this course, we will be using many of the packages in the tidyverse. We load the tidyverse with the command below.  
 ```{r}
 library("tidyverse")
-#install.packages("package_name") command to install new package
+#install.packages("package_name") <-- to install a new package
 ```
 
 ## Data Structures
 In addition to classes of data, R also organizes data in different ways. These are called data structures and include vectors, lists, matrices, data frames, and factors. Here, we will introduce vectors and data frames.  
+
+
 
 ## Vectors
 Vectors are a common way of organizing data in R.  We create vectors using the `c` command. The `c` stands for concatenate. We used this command in lab 2.  
 
 A numeric vector.
 ```{r}
-my_vector <- c(10, 20, 30) #this makes a new vector
+my_vector <- c(10, 20, 30) #This makes a new vector
 ```
 
 A character vector.
@@ -51,7 +55,7 @@ days_of_the_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "S
 
 A convenient trick for creating a vector to play around with is to generate a sequence of numbers.
 ```{r}
-my_vector_sequence <- c(1:100) 
+my_vector_sequence <- c(1:100)
 my_vector_sequence
 ```
 
@@ -71,7 +75,7 @@ my_vector_sequence[10]
 my_vector_sequence[15]
 ```
 
-2. We can use operators such as <, >, =, <=, etc. Show all values in `my_vector_sequence` that are less than or equal to 10. 
+2. We can use operators such as <, >, ==, <==, etc. Show all values in `my_vector_sequence` that are less than or equal to 10. 
 ```{r}
 my_vector_sequence<=10
 ```
@@ -86,14 +90,14 @@ The data frame is the most common way to organize data within R. A data frame st
 
 Let's build separate vectors that include length (in), weight (oz), and sex of three [ruby-throated hummingbirds](https://www.audubon.org/field-guide/bird/ruby-throated-hummingbird).  
 ```{r}
-Sex <- c("male", "female", "male")
+Sex <- c("male", "female", "male") #called "characters," not strings!
 Length <- c(3.2, 3.7, 3.4)
 Weight <- c(2.9, 4.0, 3.1)
 ```
 
 Since we work in the tidyverse, we use `tibble()` to create a data frame.  
 ```{r}
-hbirds <- tibble(Sex, Length, Weight) 
+hbirds <- tibble(Sex, Length, Weight)
 ```
 
 Notice that not only are the data neat and clean looking, there is also information provided about the class of data. `dbl` means that the value is a type of numeric [double precision floating point](http://uc-r.github.io/integer_double/).  
@@ -103,46 +107,44 @@ hbirds
 
 What are the column names of our data frame? Notice that R defaulted to using the names of our vectors, but we could name them something else when creating the data frame, or rename them later.  
 ```{r}
-names(hbirds)
+
 ```
 
 What are the dimensions of the `hbirds` data frame? The `dim()` and `str()` commands provide this information.   
 ```{r}
-dim(hbirds) #dimentions
+dim(hbirds)
 ```
 
 ```{r}
-str(hbirds) #structure
+str(hbirds)
 ```
 
 Let's use lowercase names when we create the data frame. We just changed to lowercase here, but we could use any names we wish.  
 
 Use lowercase always!
+
 ```{r}
 names(hbirds)
+```
+
+
+```{r}
+hbirds<-tibble(sex=Sex, length=Length, weight=Weight)
 ```
 
 ## Accessing Data Frame Columns and Rows 
 The same methods of selecting elements in vectors and data matrices apply to data frames. We use `[]`. We have two positions where the first applies to the rows, and the second to the columns.  
 
-  
-```{r}
-hbirds <- tibble(sex=Sex, length=Length, weight=Weight)
-hbirds
-```
-
-The fisrt column.  
+The first row.  
 ```{r}
 hbirds[1,]
 ```
-```{r}
-hbirds[1,3] #always goes row, column
 
-```
-third column
+The third column.  
 ```{r}
 hbirds[,3]
 ```
+
 ## Calculations
 We can use the `$` to access a column (variable) in a data frame. Here we calculate the mean length of the hummingbirds.  
 ```{r}
@@ -152,7 +154,7 @@ mean(hbirds$length)
 ## Writing Data to File
 We should save our hbirds data frame so we can use it again later! There are many ways to save data in R, here we write our data frame to a csv file. We use `row.names = FALSE` to avoid row numbers from printing out. 
 ```{r}
-write.csv(hbirds, "hbirds_data.csv", row.names =FALSE)
+write.csv(hbirds, "hbirds_data.csv", row.names=FALSE)
 ```
 
 ## That's it! Let's take a break and then move on to part 2!  

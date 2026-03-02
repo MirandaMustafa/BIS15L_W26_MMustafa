@@ -1,7 +1,6 @@
 ---
 title: "Homework 11"
-author: "Your Name Here"
-author: "Miranda Mustafa"
+author: "Catalina De Amorrortu"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -40,162 +39,137 @@ gapminder <- read_csv("data/gapminder.csv") %>%
 
 1. Use the function(s) of your choice to get an idea of the overall structure of the data, including its dimensions, column names, classes, etc. 
 ```{r}
-dim(gapminder)
+glimpse(gapminder)
 ```
-```{r}
 
-summary(gapminder)
-```
-```{r}
-names(gapminder)
-
-colnames(gapminder)
-
-```
 2. How many countries are represented in this dataset?
 ```{r}
-gapminder %>%
-  summarize(n_countries = n_distinct(country))
-
-   group_by(country) %>% 
-  summarize(count=n())
-
+gapminder %>% 
+  count(country) %>% 
+  select(n) %>% 
+  distinct()
 ```
 
 3. Which five countries have had the largest absolute population growth between 1925-2025? Show this as a table.
+
 ```{r}
+newminder <-  gapminder %>% 
+  filter(year == 1925 | year == 2025) %>% 
+  select(country, year, pop) %>% 
+  mutate(year = as.factor(year)) %>% 
+  pivot_wider(names_from = year, values_from = pop)
 
-top_pop_growth <- gapminder %>%
-  filter(year %in% c(1925, 2025)) %>%
-  select(country, year, pop) %>%
-  pivot_wider(names_from = year, values_from = pop) %>%
-  mutate(abs_growth = `2025` - `1925`) %>%
-  slice_max(abs_growth, n = 5)
-
-top_pop_growth
+newminder %>% 
+  mutate("difference" = (`2025` - `1925`)) %>% 
+  select(country, difference) %>% 
+  arrange(desc(difference)) %>% 
+  slice_head(n = 5)
 
 ```
 
 4. Make a plot that shows population growth over time for the top country you found in question #3.
 ```{r}
-
-top_country_name <- top_pop_growth %>% slice(1) %>% pull(country)
-
-gapminder %>%
-  filter(country == top_country_name) %>%
+gapminder %>% 
+  select(country, year, pop) %>% 
+  filter(country == "India") %>% 
   ggplot(aes(x = year, y = pop)) +
-  geom_line(color = "blue", size = 1) +
-  labs(title = paste("Population Growth in", top_country_name),
-       subtitle = "1925 - 2025",
-       y = "Total Population",
-       x = "Year") +
-  theme_minimal()
-
+  geom_line(color = "orange") +
+  geom_point(shape = 5)
 ```
 
 5. Has global life expectancy changed between 1925 and 2025? Show the min, median, mean, and max for all countries (combined) in the dataset.
 ```{r}
-
-gapminder %>%
-  summarize(
-    min_lex = min(lex, na.rm = TRUE),
-    median_lex = median(lex, na.rm = TRUE),
-    mean_lex = mean(lex, na.rm = TRUE),
-    max_lex = max(lex, na.rm = TRUE)
-  )
-
+gapminder %>% 
+  filter(year == 1925 | year == 2025) %>% 
+  select(country, year, lex) %>% 
+  mutate(year = as.factor(year)) %>% 
+  pivot_wider(names_from = year, values_from = lex) %>% 
+  mutate(lex.diff = `2025`-`1925`, na.rm = T) %>% 
+  select(lex.diff) %>% 
+  arrange(desc(lex.diff)) %>% 
+  mutate(lex.diff.min = min(lex.diff, na.rm = T), lex.diff.max = max(lex.diff, na.rm = T), lex.diff.med = median(lex.diff, na.rm = T), lex.diff.mean = mean(lex.diff, na.rm = T)) %>% 
+  select(lex.diff.max, lex.diff.min, lex.diff.mean, lex.diff.med) %>% 
+  slice_head(n=1)
 ```
 
 6. Make a plot that shows the distribution of life expectancy for all countries in 1925 and 2025 (try using `geom_density`). What do you notice about the shift in life expectancy over time?
 ```{r}
+gapminder %>% 
+  filter(year %in% c(1925, 2025)) %>% 
+  mutate(year = factor(year)) %>% 
+  ggplot(aes(x = lex, color = year, fill = year)) +
+  geom_density(alpha = 0.3) +
+  labs(title = "Distribution of Life Expectancy, 1925 and 2025", x = "Life Expectancy (years)", y = NULL) +
+  scale_fill_manual( values = c("1925" = "magenta", "2025" = "yellow"))
 
-gapminder %>%
-  filter(year %in% c(1925, 2025)) %>%
-  ggplot(aes(x = lex, fill = as.factor(year))) +
-  geom_density(alpha = 0.5) +
-  labs(title = "Shift in Life Expectancy Distribution",
-       x = "Life Expectancy",
-       y = "Density",
-       fill = "Year") +
-  theme_minimal()
-
+"The average life expectancy shifted by about 40 years in the 100 year timespan"
 ```
 
 7. We are interested in the relationship between per capita GDP and life expectancy; i.e. does having more money help you live longer in 2025? Show this as a plot. (Suggestion! Remove Monaco as an extreme outlier.)
 ```{r}
-
-gapminder %>%
-  filter(year == 2025, country != "Monaco") %>%
-  ggplot(aes(x = gdp, y = lex)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", color = "red") +
-  scale_x_log10() + # GDP is usually best viewed on a log scale
-  labs(title = "GDP vs Life Expectancy (2025)",
-       x = "GDP per Capita (Log Scale)",
-       y = "Life Expectancy") +
-  theme_minimal()
-
+gapminder %>% 
+  filter(year == 2025)  %>% 
+  mutate(gdp = signif(gdp, 3), lex = signif(lex, 2)) %>% 
+  ggplot(aes(x = lex, y = gdp)) +
+  geom_col(mapping = aes(x = lex, y = gdp)) +
+  labs(title = "Estimated Life Expectancy By GDP", x = "Life Expectancy (Years)", y = "GDP")
 ```
 
 8. Which five countries have had the highest absolute GDP per capita growth over the past 50 years? Show this as a table. (Suggestion! Remove Monaco as an extreme outlier.)
 ```{r}
+gapminder %>% 
+  filter(year == 1975 | year == 2025) %>% 
+  select(country, year, gdp) %>% 
+  mutate(year = as.factor(year)) %>% 
+  pivot_wider(names_from = year, values_from = gdp) %>% 
+  mutate(gdp.diff = `2025`-`1975`, na.rm = T) %>% 
+  select(country, gdp.diff) %>% 
+  arrange(desc(gdp.diff)) %>% 
+  slice_head(n = 5)
 
-top_gdp_growth <- gapminder %>%
-  filter(year %in% c(1975, 2025), country != "Monaco") %>%
-  select(country, year, gdp) %>%
-  pivot_wider(names_from = year, values_from = gdp) %>%
-  mutate(gdp_growth = `2025` - `1975`) %>%
-  slice_max(gdp_growth, n = 5)
-
-top_gdp_growth
-
+"Monaco has the highest change in GDP in in the past 50 years"
 ```
 
 9. How does per capita GDP growth compare between these same five countries over the past 50 years? Show this as a plot.
 ```{r}
-
-top_5_gdp_countries <- top_gdp_growth %>% pull(country)
-
-gapminder %>%
-  filter(country %in% top_5_gdp_countries, year >= 1975) %>%
-  ggplot(aes(x = year, y = gdp, color = country)) +
-  geom_line(size = 1) +
-  labs(title = "GDP per Capita Growth Comparison",
-       subtitle = "Top 5 Growers (1975-2025)",
-       y = "GDP per Capita",
-       x = "Year") +
-  theme_minimal()
+gapminder %>% 
+  filter(year == 1975 | year == 2025) %>% 
+  select(country, year, gdp) %>% 
+  mutate(year = as.factor(year)) %>% 
+  pivot_wider(names_from = year, values_from = gdp) %>% 
+  mutate(gdp.diff = `2025`-`1975`, na.rm = T) %>% 
+  select(country, gdp.diff) %>% 
+  arrange(desc(gdp.diff)) %>% 
+  slice_head(n = 5) %>% 
+  ggplot(x = country, y = gdp.diff) +
+  geom_col(mapping = aes(x = country, y = gdp.diff, fill = country)) +
+  labs(title = "GDP Growth from 1975-2025 by Country", x = "Country", y = "GDP Growth")
 
 ```
 
 10. Do one analysis of your choice that includes a table and plot as outputs.
 ```{r}
 
-gapminder %>%
-  filter(year %in% c(1925, 2025)) %>%
-  group_all() %>% # Assuming your data has a 'continent' column
-  group_by(continent, year) %>%
-  summarize(avg_lex = mean(lex, na.rm = TRUE)) %>%
-  pivot_wider(names_from = year, values_from = avg_lex)
+"Does population affect the average GDP in the US?"
+
+gapminder %>% 
+  filter(country == "USA")  %>% 
+  mutate(gdp = signif(gdp, 1), pop = signif(pop, 1)) %>% 
+  select(year, gdp, pop) %>% 
+  mutate("gdp/100" = gdp/100, "pop/10,000" = pop/10000) %>% 
+  select(year, `gdp/100`, `pop/10,000`) %>% 
+  ggplot(x = `gdp/100`, y = `pop/10,000`) +
+  geom_col(mapping = aes(x = `gdp/100`, y = `pop/10,000`)) +
+  labs(title = "Population vs GDP in the US, 1925-2025", x = "GDP/100", y = "Population/10,000")
 ```
 
 ```{r}
-gapminder %>%
-  group_by(continent, year) %>%
-  summarize(avg_lex = mean(lex, na.rm = TRUE)) %>%
-  ggplot(aes(x = year, y = avg_lex, color = continent)) +
-  geom_line(size = 1.2) +
-  labs(title = "Average Life Expectancy by Continent",
-       y = "Mean Life Expectancy",
-       x = "Year") +
-  theme_classic()
-
-
-```
-
-```{r}
-
-
+gapminder %>% 
+  filter(country == "USA")  %>% 
+  mutate(gdp = signif(gdp, 1), pop = signif(pop, 1)) %>% 
+  select(year, gdp, pop) %>% 
+  mutate("gdp/100" = gdp/100, "pop/10,000" = pop/10000) %>% 
+  select(year, `gdp/100`, `pop/10,000`)
 ```
 
 ## Knit and Upload

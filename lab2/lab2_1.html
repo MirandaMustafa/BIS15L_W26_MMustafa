@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2026-01-03" />
+<meta name="date" content="2026-01-08" />
 
 <title>Lab 2.1</title>
 
@@ -1503,7 +1503,7 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">Lab 2.1</h1>
-<h4 class="date">2026-01-03</h4>
+<h4 class="date">2026-01-08</h4>
 
 </div>
 
@@ -1518,6 +1518,33 @@ border-radius: 0px;
 5. Define NA in R.<br />
 6. Determine whether or not data have NA values.</p>
 </div>
+<div id="working-directories-and-paths" class="section level2">
+<h2>Working Directories and Paths</h2>
+<p>Before we get started with R, it is important to understand the
+concept of working directories and paths. A working directory is the
+folder on your computer where R will look for files to read in and where
+it will save files that you create. You can check your current working
+directory using the <code>getwd()</code> function.</p>
+<p>Code chunk:</p>
+<pre class="r"><code>getwd() #identify current working directory</code></pre>
+<pre><code>## [1] &quot;/Users/catamorr/Desktop/BIS15L_W26_cdeamorrortu/lab2&quot;</code></pre>
+<p>*path = address of the file</p>
+<p>What if you find that you are not in the correct working directory?
+You can change your working directory in two ways. The first is to look
+at the Session menu at the top of RStudio. Click on Session -&gt; Set
+Working Directory -&gt; Choose Directory. Then navigate to the folder
+you want to use as your working directory.</p>
+<p>The second way is to use the <code>setwd()</code> function. You will
+need to provide the full path to the folder you want to use. For
+example:</p>
+<pre class="r"><code>#setwd(&quot;/Users/cdeamorrortu/Documents/yourfolder&quot;) #uncomment and change to your path</code></pre>
+<p>What is a path? A path is the location of a file or folder on your
+computer. It tells R where to find files to read in or where to save
+files you create. Paths can be absolute or relative. An absolute path
+provides the full location of a file or folder, starting from the root
+directory. A relative path provides the location of a file or folder in
+relation to the current working directory.</p>
+</div>
 <div id="objects" class="section level2">
 <h2>Objects</h2>
 <p>In order to access the potential of R we need to assign values or
@@ -1528,22 +1555,42 @@ In this case, x gets 42. Make sure that you are in the environment panel
 and you should see the value associated with ‘x’. On a mac, you can push
 <code>option</code> and <code>-</code> to automatically generate the
 gets symbol.</p>
+<pre class="r"><code>x &lt;- 42 #this means x gets the value 42</code></pre>
 <p>To print the object to the screen, just type x.</p>
+<pre class="r"><code>x</code></pre>
+<pre><code>## [1] 42</code></pre>
 <p>Assign a value of 30 to a new object y.</p>
+<pre class="r"><code>y &lt;- 30</code></pre>
 <p>The = symbol works, but is not a convention followed by most
 programmers.</p>
+<pre class="r"><code>z = 10 #this will work, but will create problems eventually. always use &quot;gets,&quot; never &quot;equals&quot;</code></pre>
 <p>Once objects have been created, you can do things with them.</p>
+<pre class="r"><code>x + y</code></pre>
+<pre><code>## [1] 72</code></pre>
+<pre class="r"><code>x - y</code></pre>
+<pre><code>## [1] 12</code></pre>
 <p>Make two new objects, treatment and control. The value of treatment
 is 36 and the value of control is 38.</p>
+<pre class="r"><code>treatment &lt;- 36
+control &lt;- 38</code></pre>
 <p>What is the sum of treatment and control?</p>
+<pre class="r"><code>treatment + control</code></pre>
+<pre><code>## [1] 74</code></pre>
 <p>Here we make a new object <code>my_experiment</code> that is the sum
 of the treatment and control. Notice that I use <code>_</code> and not
 spaces.</p>
+<pre class="r"><code>my_experiment &lt;- treatment + control
+my_experiment</code></pre>
+<pre><code>## [1] 74</code></pre>
 <p>We can also use the function sum to do the same thing. Notice that if
 I give a new object the same name as an existing object, the old one is
 replaced.</p>
+<pre class="r"><code>my_experiment &lt;- sum(treatment,control)
+my_experiment</code></pre>
+<pre><code>## [1] 74</code></pre>
 <p>To learn more about the sum function, use the help command
 <code>?</code>.</p>
+<pre class="r"><code>?sum</code></pre>
 </div>
 <div id="nomenclature" class="section level2">
 <h2>Nomenclature</h2>
@@ -1556,27 +1603,45 @@ is the same as a function in R.</p>
 You also don’t want to give names that might get confused with
 functions; i.e. you can assign a value to ‘mean’ but this could become
 confusing because mean is also a function.</p>
+<pre class="r"><code>mean &lt;- 20</code></pre>
 <p>What is the mean of 2+8+2? (Do the math in your head first). Does the
 following code match your prediction?</p>
-<pre class="r"><code>2+8+2/3</code></pre>
-<pre><code>## [1] 10.66667</code></pre>
+<pre class="r"><code>(2+8+2)/3</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>Order of operations applies, so we need to tell R exactly what we
 want.</p>
+<pre class="r"><code>(2+8+2)/3</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>Here we use the mean function. Notice that we use <code>c</code>
-which stands for concatenate. More on this later.</p>
+which stands for concatenate. This combines the three numbers into a
+single object that the mean function can use. This type of data
+structure is called a vector.</p>
+<pre class="r"><code>mean(c(2, 8, 2)) </code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code>#c stands for &#39;combine,&#39; and creates a vector</code></pre>
 <p>Why does this not work?</p>
+<pre class="r"><code>#mean(2, 8, 2) doesn&#39;t work because we have not put the numbers into a vector</code></pre>
 </div>
 <div id="practice" class="section level2">
 <h2>Practice</h2>
 <ol style="list-style-type: decimal">
-<li><p>Create three new objects, <code>venom_GT</code>,
+<li>Create three new objects, <code>venom_GT</code>,
 <code>chiron</code>, and <code>veyron</code>. These are the fastest cars
 in the world. Assign each car to its top speed. The venom_GT can go 270,
-chiron is 261, and veyron is 268.</p></li>
-<li><p>Use arithmetic to calculate the mean top speed for the
-cars.</p></li>
-<li><p>Use the function <code>mean()</code> to calculate the mean top
-speed for the cars.</p></li>
+chiron is 261, and veyron is 268.</li>
+</ol>
+<pre class="r"><code>venom_GT &lt;- 270
+chiron &lt;- 261
+veyron &lt;- 268</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Use arithmetic to calculate the mean top speed for the cars.</li>
+</ol>
+<pre class="r"><code>mean_speed &lt;- mean(c(venom_GT + chiron + veyron))/3
+mean_speed</code></pre>
+<pre><code>## [1] 266.3333</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Use the function <code>mean()</code> to calculate the mean top speed
+for the cars.</li>
 </ol>
 </div>
 <div id="types-of-data" class="section level2">
@@ -1590,9 +1655,18 @@ my_logical &lt;- FALSE</code></pre>
 <p>To find out what type of data you are working with, use the
 <code>class()</code> function. This is important because sometimes we
 will need to change the type of data to perform certain analyses.</p>
+<pre class="r"><code>class(my_numeric)</code></pre>
+<pre><code>## [1] &quot;numeric&quot;</code></pre>
+<pre class="r"><code>class(my_integer)</code></pre>
+<pre><code>## [1] &quot;integer&quot;</code></pre>
 <p>You can use the <code>is()</code> and <code>as()</code> functions to
 clarify or specify a type of data.</p>
+<pre class="r"><code>is.integer(my_numeric)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
 <p>Let’s convert my_numeric to an integer.</p>
+<pre class="r"><code>my_integer &lt;- as.integer(my_numeric)</code></pre>
+<pre class="r"><code> is.integer(my_integer)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="missing-data" class="section level2">
 <h2>Missing Data</h2>
@@ -1603,20 +1677,33 @@ with NAs.</p>
 <p>NA values are used to designate missing data. <code>is.na</code> or
 <code>anyNA</code> are useful functions when dealing with NAs in
 data.</p>
+<pre class="r"><code>my_missing &lt;- NA #NA stands for a missing value</code></pre>
+<pre class="r"><code>is.na(my_missing)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>anyNA(my_missing)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="practice-1" class="section level2">
 <h2>Practice</h2>
 <ol style="list-style-type: decimal">
-<li><p>Let’s create a vector that includes some missing data (we will
-discuss vectors more in part 2). For now, run the following code
-chunk.</p></li>
-<li><p>Calculate the mean of <code>new_vector</code>.</p></li>
-<li><p>How do you interpret this result? What does this mean about
-NAs?</p></li>
+<li>Let’s create a vector that includes some missing data. For now, run
+the following code chunk.</li>
+</ol>
+<pre class="r"><code>new_vector &lt;- c(7, 6.2, 5, 9, NA, 4, 9.8, 7, 3, 2)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Calculate the mean of <code>new_vector</code>.</li>
+</ol>
+<pre class="r"><code>mean(new_vector)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li><p>How do you interpret this result? What does this mean about NAs?
+NAs override any of the other numbers in the dataset, and thus make the
+overall average of the set an NA as well.</p></li>
 <li><p>Recalculate the mean using the following code chunk. Why is the
 useful?</p></li>
 </ol>
-<p>–&gt;<a href="https://jmledford3115.github.io/datascibiol/">Home</a></p>
+<pre class="r"><code>mean(new_vector, na.rm = TRUE) #removes NA values</code></pre>
+<pre><code>## [1] 5.888889</code></pre>
 </div>
 
 

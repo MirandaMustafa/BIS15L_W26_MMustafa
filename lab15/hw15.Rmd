@@ -35,5 +35,10 @@ elephants <- read_csv("data/elephants_data/elephants.csv") %>%
 
 2. In addition to the .Rmd file, save your app as a standalone R script called `elephants.csv`.
 
+```{r}
+#make sure you have a read
+```
+
+
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!

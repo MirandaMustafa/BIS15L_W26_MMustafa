@@ -1,9 +1,7 @@
 ---
 title: "Lab 12 AI"
 date: "`r Sys.Date()`"
-output:
-  slidy_presentation: default
-  ioslides_presentation: default
+output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}

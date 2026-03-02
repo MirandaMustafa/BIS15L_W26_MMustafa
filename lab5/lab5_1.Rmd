@@ -57,12 +57,12 @@ select(penguins, species, body_mass_g)
 
 To add a range of columns use `start_col:end_col`.
 ```{r}
-select(penguins, species:flipper_length_mm)
+select(penguins, species:flipper_length_mm) #everything between the two variable columns listed, includes them
 ```
 
 The ! operator is useful in select. It allows us to select everything except the specified variables.
 ```{r}
-select(penguins, !body_mass_g)
+select(penguins, !body_mass_g) #everything except for body mass
 ```
 
 Alternatively, you can use the `c()` function to exclude multiple columns.
@@ -72,7 +72,7 @@ select(penguins, !c(species, island, year, sex))
 
 For very large data frames with lots of variables, `select()` utilizes lots of different operators to make things easier. Let's say we are only interested in the variables that deal with length.
 ```{r}
-select(penguins, contains("mm"))
+select (penguins, contains("mm"))
 ```
 
 `starts_with()`
@@ -82,27 +82,27 @@ select(penguins, starts_with("bill"))
 
 `ends_with()`
 ```{r}
-select(penguins,ends_with("mm"))
+select(penguins, ends_with("mm"))
 ```
 
 You can also select columns based on the class of data.  
 ```{r}
-select(penguins,where(is.numeric))
+select(penguins, where(is.numeric))
 ```
 
 There are a few verbs that go with `select()` because they deal with columns. One of these is `rename()`. `rename()` allows you to rename columns in a dataframe. The format is `new_name = old_name`.
 ```{r}
-rename(penguins, body_mass=body_mass_g) #temporary
+rename(penguins, body_mass = body_mass_g) #"new name" = "old name". Doesn't overwrite it 
 ```
 
 Alternatively, you can rename from within select.
 ```{r}
-select(penguins, species, body_mass=body_mass_g)
+select(penguins, species, body_mass = body_mass_g)
 ```
 
 The second is `relocate()`. `relocate()` allows you to move columns to different locations within a dataframe. Let's say we want to move `length` to be the first column in the dataframe.
 ```{r}
-relocate(penguins, year)
+relocate(penguins, year) #moves variable to the front, depending on what you want viewers to focus on.
 ```
 
 ## Practice  

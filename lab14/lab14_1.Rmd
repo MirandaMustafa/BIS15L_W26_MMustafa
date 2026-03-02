@@ -39,7 +39,7 @@ library(janitor)
 ```{r message=FALSE, warning=FALSE}
 #install.packages("ggmap")
 library(ggmap)
-#install.packages("leaflet")
+install.packages("leaflet")
 library(leaflet)
 ```
 
@@ -48,7 +48,7 @@ Because some of these maps are proprietary, you will need an API key to use them
 
 Start by making an account with [Stadia Maps](https://client.stadiamaps.com/signup/). You need to add a "property" which is just a name for your project. Once you have an account, you can get an API key. Use the following code to register your key.  
 ```{r}
-register_stadiamaps("YOUR API KEY HERE", write = FALSE)
+register_stadiamaps("95fc2c89-4097-40d9-aa48-b0ba8bad5a00", write = FALSE)
 ```
 
 ## Load the Data
@@ -59,6 +59,11 @@ spiders <- read_csv("data/spiders_with_locs.csv")%>%
   filter(latitude<=42)
 ```
 
+```{r}
+names(spiders)
+```
+
+
 ## Create Base Map
 Our goal is to plot the spiders locations from the columns which contain the latitude and longitude. First, we need to get a base map for plotting our points on. We could plot them without a base map, but that wouldn't give us any context as to where they are in space. To get a base map we specify a min and max of each x and y coordinate, and create a bounding box.  
 
@@ -66,28 +71,34 @@ We set the bounding box to a little outside our min and max locations with `f = 
 
 `summary()` gives us our min and max.
 ```{r}
-
+spiders %>% 
+  select(latitude, longitude) %>% 
+  summary()
 ```
 
 Now we set the bounding box. We use the min and max values for latitude and longitude to set the range.  
 ```{r}
-
+lat <- c(34.67, 41.80)
+long <- c(-124.1, -115.5)
+bbox <- make_bbox(long, lat, f = 0.03) #f makes a buffer for the box, value inputed is a percentage
 ```
 
 Let's get a base map for our bounding box area. There are several different map [styles](https://docs.stadiamaps.com/themes/)
 ```{r}
-
+map1 <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom = 7)
 ```
 
 Have a look at the map.  
 ```{r}
-
+ggmap(map1)
 ```
 
 ## Adding Points to Base Map
 To add our points we only need to specify the x and y location similar to how we made plots in `ggplot.` 
 ```{r}
-
+ggmap(map1) +
+  geom_point(data = spiders, aes(longitude, latitude), size = 0.75, color = "pink", alpha = 0.8) +
+  labs(x = "longitude", y = "latitude", title = "california usofila records")
 ```
 
 ## Leaflet
@@ -95,22 +106,51 @@ If we want to make an interactive map, we can use the `leaflet` package. This al
 
 Get the min/max from the data.
 ```{r}
-
+spiders %>% 
+  summarize(
+  lon.min = min(longitude, na.rm = T), 
+  lon.max = max(longitude, na.rm = T),
+  lat.min = min(latitude, na.rm = T), 
+  lat.max = max(latitude, na.rm = T)
+  )
 ```
 
 Add this to four new variables which will be used to create the bounding box in leaflet.
 ```{r}
-
+lon.min <- -124.13
+lon.max<- -115.49
+lat.min<- 34.67
+lat.max<- 41.8
 ```
 
 Build the interactive map using Stadia maps.
 ```{r}
-
+leaflet(spiders) %>% 
+  addProviderTiles(providers$Stadia.StamenTerrain) %>% 
+  addCircleMarkers(
+    lng = ~longitude,
+    lat = ~latitude,
+    radius = 2,
+    stroke = FALSE,
+    fillOpacity = 0.7
+  ) %>% 
+  addScaleBar(position = "bottomleft") %>% 
+  fitBounds(lng1 = lon.min, lat1 = lat.min, lng2 = lon.max, lat2 = lat.max)
 ```
 
 Build the same interactive map using default OpenStreet maps.
 ```{r}
-
+leaflet(spiders) %>% 
+  addTiles() %>% 
+  addCircleMarkers(
+    lng = ~longitude,
+    lat = ~latitude,
+    radius = 2,
+    stroke = FALSE,
+    fillOpacity = 0.7
+  ) %>% 
+  addScaleBar(position = "bottomleft") %>% 
+  fitBounds(lng1 = lon.min, lat1 = lat.min, lng2 = lon.max, lat2 = lat.max)
 ```
 
 ## Practice
@@ -118,26 +158,32 @@ For this practice we will use data on the distribution of grizzly bears in Alask
 
 1. Load the `grizzly` data and evaluate its structure.  
 ```{r message=FALSE, warning=FALSE}
-
+grizzly <- clean_names(read_csv("data/bear-sightings.csv"))
+summary(grizzly)
 ```
 
 2. Use the range of the latitude and longitude to build an appropriate bounding box for your map.  
 ```{r}
-
+bearslong <- grizzly %>% 
+  select(longitude)
+bearslat <- grizzly %>% 
+  select(latitude)
+bearsbbox <- make_bbox(bearslong, bearslat, f = 0.03)
 ```
 
 3. Load a map from `stadiamaps` in a `stamen_terrain` projection and display the map.
 ```{r}
-
+bearsmap <- get_stadiamap(bearsbbox, maptype = "stamen_terrain", zoom = 2)
 ```
 
 ```{r}
-
+ggmap(bearsmap)
 ```
 
 4. Build a final map that overlays the recorded observations of grizzly bears in Alaska.  
 ```{r}
-
+ggmap(bearsmap) +
+geom_point(data = grizzly, aes(longitude, latitude), size = 0.5, color = "firebrick")
 ```
 
 -->[Home](https://jmledford3115.github.io/datascibiol/)

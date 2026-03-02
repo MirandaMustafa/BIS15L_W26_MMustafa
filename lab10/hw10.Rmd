@@ -1,6 +1,6 @@
 ---
 title: "Homework 10"
-author: "Key"
+author: "Catalina De Amorrortu"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -34,104 +34,118 @@ sharks <-
 ## Questions
 1. Are there any "hotspots" for shark incidents in California? Show the top five counties with the most incidents.
 ```{r}
- names(sharks)
+sharks %>% 
+  group_by(county) %>% 
+  count(county) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T))) %>% 
+  arrange(desc(n)) %>% 
+  slice_head(n = 5)
 ```
 
-```{r}
-sharks %>% 
-  count(county) %>% 
-  arrange(desc(n)) %>% 
-  head(5)
-```
 2.  Make a plot that shows the total number of incidents per county.
 ```{r}
 sharks %>% 
-  count(county) %>% 
-  ggplot(aes(x = reorder(county, n), y = n)) +
-  geom_col(fill = "blue") +
-  coord_flip() +
-  labs(title = "Shark Incidents by County", x = "County", y = "Number of Incidents")
+  ggplot(mapping = aes(x = county)) +
+  geom_bar(mapping = aes(fill = county)) +
+  coord_flip() + 
+  labs(title = "Number of Incidents per County", x = "County", y = "Number of Incidents")
 ```
 
 3. Are there months of the year when incidents are more likely to occur? Make a plot that shows the total number of incidents by month. Which month has the highest number of incidents?  
 ```{r}
 sharks %>% 
-  count(month) %>% 
-  ggplot(aes(x = as.factor(month), y = n)) +
-  geom_col(fill = "blue") +
-  labs(title = "Incidents by Month", x = "Month", y = "Count")+
-  sharks %>% count(month) %>% arrange(desc(n))
-
-
-
+  ggplot(mapping = aes(x = as.factor(month))) +
+  geom_bar(mapping = aes(fill = as.factor(month))) +
+  labs(title = "Shark Attacks by Month", x = "Month", fill = "Month")
 ```
 
 ```{r}
-
+"October has the highest number of incidents."
 ```
 
 4. Is there a time of day when most attacks occur? Make a plot that shows the total number of incidents by time of day. Which time of day has the highest number of incidents?  
 ```{r}
 sharks %>% 
-  count(time) %>% 
-  ggplot(aes(x = time, y = n)) +
-  geom_col(fill="blue") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-  labs(title = "Incidents by Time of Day")
+  ggplot(mapping = aes(x = as.factor(time))) +
+  geom_bar(mapping = aes(fill = as.factor(time))) +
+  labs(title = "Shark Attacks by Hour", x = "Time of Day", fill = "Time of Day") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(title = "Number of Accidents by Time of Day", x = "Time of Day", y = "Number of Accidents")
+
+"The most amount of shark attacks happen at 10:45"
+
 ```
 
 5. How do the number and types of injuries compare by county? Make a table that shows the number of injury types by county. Which county has the highest number incidents? (hint: your table should be in wide format)
 ```{r}
-injury_table <- sharks %>% 
-  group_by(county, injury) %>% 
-  summarize(total = n(), .groups = 'drop') %>% 
-  pivot_wider(names_from = injury, values_from = total) %>% 
-  clean_names()
+sharks %>% 
+  group_by(county) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = injury, values_from = n) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T)))
 
-injury_table
+"San Mateo County has the highest number incidents."
 ```
 
 6. Use the table from #5 to make a plot that shows the total number of incidents by county.
 ```{r}
 sharks %>% 
-  count(county) %>% 
-  ggplot(aes(x = reorder(county, n), y = n)) +
-  geom_col(fill = "blue") +
-  coord_flip() +
-  labs(title = "Total Incidents by County")
+  group_by(county) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = injury, values_from = n) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T))) %>% 
+  mutate(total = (minor + minor* + major + major* + none + none* + fatal)) %>% 
+  ggplot(x = county, y = total) +
+  geom_col(mapping = aes(x = county, y = total, fill = county)) + 
+  coord_flip()  + 
+  labs(title = "Number of Accidents by County", x = "County", y = "Accidents")
+
+"San Diego County has the highest number of incidents"
 ```
 
 7. In the data, `mode` refers to a type of activity. Which activity is associated with the highest number of incidents?
 ```{r}
 sharks %>% 
-  count(mode) %>% 
-  arrange(desc(n))
+  group_by(mode) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = injury, values_from = n) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T))) %>% 
+  mutate(total = (minor + minor* + major + major* + none + none* + fatal)) %>%
+  select(mode, total)
 ```
 
 8. Make a plot that compares the number of incidents by activity.
 ```{r}
 sharks %>% 
-  count(mode) %>% 
-  ggplot(aes(x = reorder(mode, n), y = n)) +
-  geom_col(fill= "blue") +
-  coord_flip() +
-  labs(title = "Incidents by Activity Mode")
+  group_by(mode) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = injury, values_from = n) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T))) %>% 
+  mutate(total = (minor + minor* + major + major* + none + none* + fatal)) %>% 
+  ggplot(x = mode, y = total) +
+  geom_col(mapping = aes(x = mode, y = total, fill = mode)) + 
+  coord_flip() + 
+  labs(title = "Incidents by Activity Type", x = "Mode", y = "Number of Incidents")
 ```
 
 9. Which shark species is involved in the highest number of incidents?  
 ```{r}
 sharks %>% 
-  count(species) %>% 
-  arrange(desc(n))
+  group_by(species) %>% 
+  count(injury) %>% 
+  pivot_wider(names_from = injury, values_from = n) %>% 
+  summarize(across(where(is.numeric), ~sum(.x, na.rm = T))) %>% 
+  mutate(total = (minor + minor* + major + major* + none + none* + fatal)) %>%
+  select(species, total)
 ```
 
 10. Are all incidents involving Great White's fatal? Make a plot that shows the number and types of incidents for Great White's only.  
 ```{r}
 sharks %>% 
-  filter(species == "White") %>% # Note: Check if the data uses "White" or "Great White"
-  ggplot(aes(x = injury)) +
-  geom_bar(fill = "blue") +
-  labs(title = "Injury Severity of Great White Incidents", x = "Injury Type", y = "Count")
+  filter(species == "White") %>% 
+  ggplot(mapping = aes(x = injury)) +
+  geom_bar(mapping = aes(fill = injury)) + 
+  labs(title = "Great White Shark Attacks by Injury Type", x = "Injurty", y = "Count")
 ```
 
 ## Knit and Upload
