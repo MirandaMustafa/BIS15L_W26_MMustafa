@@ -196,15 +196,15 @@ elefactor %>%
 \
 \
 ```{r}
-glimpse(elefactor)
+#glimpse(elefactor)
 
 #elefactor %>% filter((sex == "f"  estimated_age_years == 12) | (sex == "m" & estimated_age_years == 25))
 
-elefactor %>% 
-  filter(estimated_age_years == 12 | estimated_age_years == 25) %>% 
-  mutate(ifelse())
+#elefactor %>% 
+#  filter(estimated_age_years == 12 | estimated_age_years == 25) %>% 
+#  mutate(ifelse())
   
-?ifelse
+#?ifelse
 ```
 
 \

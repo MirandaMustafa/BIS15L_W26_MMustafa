@@ -1,7 +1,7 @@
 ---
 title: "Homework 8"
-author: "Catalina De Amorrortu"
-date: "2026-02-04"
+author: "Miranda Mustafa"
+date: "2026-03-02"
 output:
   html_document: 
     theme: spacelab
